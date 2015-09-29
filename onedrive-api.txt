@@ -1,0 +1,28 @@
+﻿https://dev.onedrive.com/README.htm
+Simple item upload to OneDrive using PUT (100MB)
+  PUT /drive/items/{parent-id}:/{filename}:/content
+  PUT /drive/root:/{parent-path}/{filename}:/content
+  PUT /drive/items/{parent-id}/children/{filename}/content
+Resumable item upload (按顺序,块大小相同)
+  POST /drive/root:/{path_to_item}:/upload.createSession
+  POST /drive/items/{parent_item_id}:/{filename}:/upload.createSession
+  Upload fragments: make a PUT request to the uploadUrl received when the session was created
+  PUT https://sn3302.up.1drv.com/up/fe6987415ace7X4e1eF866337
+  Content-Length: 26
+  Content-Range: bytes 0-25/128
+
+  <bytes 0-25 of the file>
+Upload an item to OneDrive from a URL (Preview) （离线下载？）
+  POST /drive/items/{parent-item}/children
+  Content-Type: application/json
+  Prefer: respond-async
+  
+  {
+    "@content.sourceUrl": "http://wscont2.apps.microsoft.com/winstore/1x/e33e38d9-d138-42a1-b252-27da1924ca87/Screenshot.225037.100000.jpg",
+    "name": "halo-screenshot.jpg",
+    "file": { }
+  }
+Download a OneDrive Item contents 可以用range
+  GET /drive/items/{item-id}/content
+  GET /drive/root:/{path and filename}:/content
+  会得到一个302 Location然后去下载

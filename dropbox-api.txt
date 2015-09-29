@@ -1,0 +1,152 @@
+﻿https://www.dropbox.com/developers/core/docs
+When you'd like to make API calls to Dropbox, simply include the authorization header, "Authorization: Bearer <YOUR_ACCESS_TOKEN_HERE>", with each request.
+认证：https://www.dropbox.com/1/oauth2/authorize
+  response_type = token
+  client_id = app's key
+  redirect_uri = 返回页
+  state = 最多500字符的自定义内容
+  Sample response: [REDIRECT_URI]#access_token=ABCDEFG&token_type=bearer&uid=12345&state=[STATE]
+获取用户信息：https://api.dropboxapi.com/1/account/info
+  Sample JSON response
+  {
+    "uid": 12345678,
+    "display_name": "John User",
+    "name_details": {
+        "familiar_name": "John",
+        "given_name": "John",
+        "surname": "User"
+    },
+    "referral_link": "https://www.dropbox.com/referrals/r1a2n3d4m5s6t7",
+    "country": "US",
+    "locale": "en",
+    "email": "john@example.com",
+    "email_verified": false,
+    "is_paired": false,
+    "team": {
+        "name": "Acme Inc.",
+        "team_id": "dbtid:1234abcd"
+    },
+    "quota_info": {
+        "shared": 253738410565,
+        "quota": 107374182400000,
+        "normal": 680031877871
+    }
+  }
+下载：https://content.dropboxapi.com/1/files/auto/<path>
+  returns: The specified file's contents at the requested revision. The HTTP response contains the content metadata in JSON format within an x-dropbox-metadata header.
+  支持HTTP Range Retrieval Requests
+
+上传：https://content.dropboxapi.com/1/files_put/auto/<path>?param=val
+  param=val The URL-encoded parameters for this request. They cannot be sent in the request body.
+  Request body: The file contents to be uploaded. Since the entire PUT body will be treated as the file, any parameters must be passed as part of the request URL. The request URL should be signed just as you would sign any other OAuth request URL.
+  Sample JSON response
+  {
+    "size": "225.4KB",
+    "rev": "35e97029684fe",
+    "thumb_exists": false,
+    "bytes": 230783,
+    "modified": "Tue, 19 Jul 2011 21:55:38 +0000",
+    "path": "/Getting_Started.pdf",
+    "is_dir": false,
+    "icon": "page_white_acrobat",
+    "root": "dropbox",
+    "mime_type": "application/pdf",
+    "revision": 220823
+  }
+  这个方式不支持chunk，最大150MB
+取信息：https://api.dropboxapi.com/1/metadata/auto/<path>
+  Sample JSON return value for a file
+  {
+    "size": "225.4KB",
+    "rev": "35e97029684fe",
+    "thumb_exists": false,
+    "bytes": 230783,
+    "modified": "Tue, 19 Jul 2011 21:55:38 +0000",
+    "client_mtime": "Mon, 18 Jul 2011 18:04:35 +0000",
+    "path": "/Getting_Started.pdf",
+    "is_dir": false,
+    "icon": "page_white_acrobat",
+    "root": "dropbox",
+    "mime_type": "application/pdf",
+    "revision": 220823
+  }
+
+
+  Sample JSON return value for a folder when list parameter is set to true. If list is false the contents key will simply be omitted from the result.
+  {
+    "size": "0 bytes",
+    "hash": "37eb1ba1849d4b0fb0b28caf7ef3af52",
+    "bytes": 0,
+    "thumb_exists": false,
+    "rev": "714f029684fe",
+    "modified": "Wed, 27 Apr 2011 22:18:51 +0000",
+    "path": "/Photos",
+    "is_dir": true,
+    "icon": "folder",
+    "root": "dropbox",
+    "contents": [
+        {
+            "size": "2.3 MB",
+            "rev": "38af1b183490",
+            "thumb_exists": true,
+            "bytes": 2453963,
+            "modified": "Mon, 07 Apr 2014 23:13:16 +0000",
+            "client_mtime": "Thu, 29 Aug 2013 01:12:02 +0000",
+            "path": "/Photos/flower.jpg",
+            "photo_info": {
+              "lat_long": [
+                37.77256666666666,
+                -122.45934166666667
+              ],
+              "time_taken": "Wed, 28 Aug 2013 18:12:02 +0000"
+            },
+            "is_dir": false,
+            "icon": "page_white_picture",
+            "root": "dropbox",
+            "mime_type": "image/jpeg",
+            "revision": 14511
+        }
+    ],
+    "revision": 29007
+  }
+可以用来监视文件改变/longpoll_delta
+获得一个文件直接的下载链接，可能有用https://api.dropboxapi.com/1/media/auto/<path>
+  Sample JSON return value for a file
+  {
+    "url": "https://dl.dropboxusercontent.com/1/view/abcdefghijk/example",  （注：解析dl.dropboxusercontent.com即可获得下载服务器信息）
+    "expires": "Fri, 16 Sep 2011 01:01:25 +0000"
+  }
+  4小时过期
+用来给另一个用户一个复制文件的code：https://api.dropboxapi.com/1/copy_ref/auto/<path>
+  Sample JSON return value for a file
+  {
+    "copy_ref": "z1X6ATl6aWtzOGq0c3g5Ng",
+    "expires": "Fri, 31 Jan 2042 21:01:05 +0000"
+  }
+分块上传（但是只能按顺序！48小时有效）https://content.dropboxapi.com/1/chunked_upload?param=val
+  Typical usage:
+  1.Send a PUT request to /chunked_upload with the first chunk of the file without setting upload_id, and receive an upload_id in return.
+  2.Repeatedly PUT subsequent chunks using the upload_id to identify the upload in progress and an offset representing the number of bytes transferred so far.
+  3.After each chunk has been uploaded, the server returns a new offset representing the total amount transferred.
+  4.After the last chunk, POST to /commit_chunked_upload to complete the upload.
+  upload_id: The unique ID of the in-progress upload on the server. If left blank, the server will create a new upload session.
+  offset: The byte offset of this chunk, relative to the beginning of the full file. The server will verify that this matches the offset it expects. If it does not, the server will return an error with the expected offset.
+分块上传之后提交https://content.dropboxapi.com/1/commit_chunked_upload/auto/<path>
+  upload_id: Used to identify the chunked upload session you'd like to commit.
+离线下载？https://api.dropboxapi.com/1/save_url/auto/<path>
+  url: The URL to be fetched.
+  Returns: {"status": "PENDING", "job": "PEiuxsfaISEAAAAAAADwzg"}
+查询离线下载状态https://api.dropboxapi.com/1/save_url_job/<job-id>
+  Returns: A dictionary with a status field with one of the following values:
+  PENDING – The job has not yet started.
+  DOWNLOADING – The job has started but hasn't yet completed.
+  COMPLETE – The job is complete.
+  FAILED – The job failed. An additional error field will describe the failure.
+  {"status": "FAILED", "error": "Job timed out"}
+新建文件夹https://api.dropboxapi.com/1/fileops/create_folder
+  root: The root relative to which path is specified. Valid values are auto (recommended), sandbox, and dropbox.
+  path: The path to the new folder to create relative to root.
+  Returns: Metadata for the new folder
+删除（同上）https://api.dropboxapi.com/1/fileops/delete
+
+

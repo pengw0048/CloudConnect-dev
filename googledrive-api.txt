@@ -1,0 +1,47 @@
+﻿https://developers.google.com/drive/web/about-sdk
+Simple upload
+  POST /upload/drive/v2/files?uploadType=media HTTP/1.1
+  Host: www.googleapis.com
+  Content-Type: image/jpeg
+  Content-Length: number_of_bytes_in_file
+  Authorization: Bearer your_auth_token
+  
+  JPEG data
+
+Resumable upload 也要按顺序上传
+ Step 1: Start a resumable session 
+  POST /upload/drive/v2/files?uploadType=resumable HTTP/1.1
+  Host: www.googleapis.com
+  Authorization: Bearer your_auth_token
+  Content-Length: 38
+  Content-Type: application/json; charset=UTF-8
+  X-Upload-Content-Type: image/jpeg
+  X-Upload-Content-Length: 2000000
+  
+  {
+    "title": "My File"
+  }
+  Note: For an initial resumable update request without metadata, leave the body of the request empty, and set the Content-Length header to 0.
+ Step 2: Save the resumable session URI
+  HTTP/1.1 200 OK
+  Location: https://www.googleapis.com/upload/drive/v2/files?uploadType=resumable&upload_id=xa298sd_sdlkj2
+  Content-Length: 0
+  The value of the Location header, as shown in the above example response, is the session URI you'll use as the HTTP endpoint for doing the actual file upload or querying the upload status.
+ Step 3: Upload the file
+  PUT {session_uri} HTTP/1.1
+  Host: www.googleapis.com
+  Content-Length: 524288
+  Content-Type: image/jpeg
+  Content-Range: bytes 0-524287/2000000
+  
+  bytes 0-524288
+  每个块（除最后一个）必须是256 KB的倍数
+ Resume an interrupted upload
+  Query the current status of the upload by issuing an empty PUT request to the upload URI. For this request, the HTTP headers should include a Content-Range header indicating that the current position in the file is unknown.  For example, set the Content-Range to */2000000 if your total file length is 2,000,000. If you don't know the full size of the file, set the Content-Range to */*.
+
+Downloading a file - Preferred method: using alt=media
+  GET https://www.googleapis.com/drive/v2/files/0B9jNhSvVjoIVM3dKcGRKRmVIOVU?alt=media
+  Authorization: Bearer ya29.AHESVbXTUv5mHMo3RYfmS1YJonjzzdTOFZwvyOAUVhrs
+  Range: bytes=500-999
+Using gzip
+
