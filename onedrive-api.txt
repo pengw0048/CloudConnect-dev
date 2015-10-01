@@ -9,13 +9,15 @@ access token一般过期时间为1小时。
 
 以下所有地址之前加上https://api.onedrive.com/v1.0
 
+我这里显示的分段上传地址是"uploadUrl":"https://api.onedrive.com/up/....
+
 
 https://dev.onedrive.com/README.htm
 Simple item upload to OneDrive using PUT (100MB)
   PUT /drive/items/{parent-id}:/{filename}:/content
   PUT /drive/root:/{parent-path}/{filename}:/content
   PUT /drive/items/{parent-id}/children/{filename}/content
-Resumable item upload (按顺序,块大小相同)
+Resumable item upload (按顺序)
   POST /drive/root:/{path_to_item}:/upload.createSession
   POST /drive/items/{parent_item_id}:/{filename}:/upload.createSession
   Upload fragments: make a PUT request to the uploadUrl received when the session was created
