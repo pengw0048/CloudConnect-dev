@@ -169,23 +169,26 @@ namespace HelloOnedrive
             return req;
         }
 
-        static string HttpPost(string URL, string post, string token, bool PreferAsync = false, bool GetLocation = false, bool isJson = false)
+        static string HttpPost(string URL, string post, string token, bool PreferAsync = false, bool GetLocation = false, bool isJson = false, bool AllowAutoRedirect = true)
         {
             byte[] data = Encoding.ASCII.GetBytes(post);
             HttpWebRequest req = GenerateRequest(URL, "POST", token, false, isJson ? "application/json" : "application/x-www-form-urlencoded", data, 0, data.Length, null, PreferAsync);
+            if (AllowAutoRedirect == false) req.AllowAutoRedirect = false;
             return GetResponse(req, GetLocation);
         }
 
-        static string HttpGet(string URL, string token, bool GetLocation = false)
+        static string HttpGet(string URL, string token, bool GetLocation = false, bool AllowAutoRedirect = true)
         {
             HttpWebRequest req = GenerateRequest(URL, "GET", token);
+            if (AllowAutoRedirect == false) req.AllowAutoRedirect = false;
             return GetResponse(req, GetLocation);
         }
 
-        static string HttpPut(string URL, string token, byte[] data, int offset = 0, int length = -1, string ContentRange = null)
+        static string HttpPut(string URL, string token, byte[] data, int offset = 0, int length = -1, string ContentRange = null, bool AllowAutoRedirect = true)
         {
             if (length < 0) length = data.Length;
             HttpWebRequest req = GenerateRequest(URL, "PUT", token, true, "application/octet-stream", data, offset, length, ContentRange);
+            if (AllowAutoRedirect == false) req.AllowAutoRedirect = false;
             return GetResponse(req);
         }
 
@@ -242,13 +245,13 @@ namespace HelloOnedrive
         {
             string location = HttpPost("https://api.onedrive.com/v1.0/drive/root/children",
                 "{ \"@content.sourceUrl\": \"" + url + "\", \"name\": \"" + name + "\", \"file\": { } }"
-                , token, true, true, true);
+                , token, true, true, true, false);
             return location;
         }
 
         static string QueryOffline(string job, string token)
         {
-            string respHTML = HttpGet(job, token);
+            string respHTML = HttpGet(job, token, false);
             if (respHTML.Length < 3)
             {
                 return HttpGet(job, token, true);
@@ -264,15 +267,21 @@ namespace HelloOnedrive
             GetResponse(req);
         }
 
+        static string GetDownloadLink(string token)
+        {
+            return HttpGet("https://api.onedrive.com/v1.0/drive/root:/simple.txt:/content", token, true, false);
+        }
+
         static void Main(string[] args)
         {
             string token = GetToken(refresh_token);
             GetBasicInfo(token);
             SimpleUpload(token);
+            Console.WriteLine(GetDownloadLink(token));
             ChunkedUpload(token);
             Delete("simple.txt", token);
             Delete("chunked.txt", token);
-            string job = OfflineDownload("http://down.sandai.net/thunder7/Thunder_dl_7.9.40.5006.exe", "thunder.exe", token);
+            string job = OfflineDownload("http://www.worldoftanks-wot.com/wp-content/uploads/wot-september-free.jpg", "1.jpg", token);
             while (true)
             {
                 System.Threading.Thread.Sleep(1000);
@@ -280,6 +289,7 @@ namespace HelloOnedrive
                 Console.WriteLine(ret);
                 if (ret.StartsWith(" ") == false) break;
             }
+            Delete("1.jpg", token);
         }
     }
 }

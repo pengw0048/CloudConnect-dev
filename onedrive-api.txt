@@ -11,6 +11,8 @@ access token一般过期时间为1小时。
 
 我这里显示的分段上传地址是"uploadUrl":"https://api.onedrive.com/up/....
 
+下载时会重定向到的一个地址是 https://public.bn1302.livefilestore.com/... 这里需要做很多测试才能确定所有可能性
+
 
 https://dev.onedrive.com/README.htm
 Simple item upload to OneDrive using PUT (100MB)
