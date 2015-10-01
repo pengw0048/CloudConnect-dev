@@ -1,4 +1,14 @@
-﻿https://dev.onedrive.com/README.htm
+﻿客户端 ID:  000000004816FA26
+客户端密钥: UBVcd-hCr6JYFnldXyY5pn85T2rkUGMW
+获得Code：GET https://login.live.com/oauth20_authorize.srf?client_id=000000004816FA26&scope=wl.signin%20wl.offline_access%20onedrive.readwrite&response_type=code&redirect_uri=http://stomakun.tk/echo.php
+
+看来code是会过期的或只能用一次，要用Refresh code来获取新的token。
+"refresh_token":"MCtAD7A4A9Z1zIRBj3Rv6zUGRgPJRkwwWNnThF3J07UxaDhvJncJXD8jHk5Be3sApsShMLUaonNtRbZBUMkh69Gsuf5gdDbir9JYKTEoe1ujGkznVlsNZncsEIhSc3IwMN*qXyoGHlmHwUuSFRjh5mtb3iDXfxOZHuCyAmwax4UqPNKlMvrQLDXrvcpMZuoRsnQt504!X*m7tgssfsbK0SsMduE5KfSpYLolJQ0YRZvmsFIm2dLP1sFPHOJofuIBOHDK3J5Dk6Skw*9w9rrSJx13OS27*PHNJQVrmarvK0jhfLCCNCbpGgHc43zmn2uFZRuGLiMVFVf8KXL*1QEykCxyghNfl3RazcDJQCzK8c!TOmPcBJxph3VhW9pVyGfOtNA$$"
+
+access token一般过期时间为1小时。
+
+
+https://dev.onedrive.com/README.htm
 Simple item upload to OneDrive using PUT (100MB)
   PUT /drive/items/{parent-id}:/{filename}:/content
   PUT /drive/root:/{parent-path}/{filename}:/content
