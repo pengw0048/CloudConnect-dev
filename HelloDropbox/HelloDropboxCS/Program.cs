@@ -113,7 +113,7 @@ class Module1
         Uri httpUrl = new Uri(URL);
         HttpWebRequest req = (HttpWebRequest)WebRequest.Create(httpUrl);
         req.Method = Method;
-        req.Headers.Add("Authorization", "Bearer " + token);
+        if (token != null) req.Headers.Add("Authorization", "Bearer " + token);
         req.KeepAlive = KeepAlive;
         if (ContentType != null) req.ContentType = ContentType;
         if (data != null)
@@ -126,30 +126,44 @@ class Module1
         return req;
     }
 
+    static string HttpPost(string URL, string post, string token)
+    {
+        byte[] data = Encoding.ASCII.GetBytes(post);
+        HttpWebRequest req = GenerateRequest(URL, "POST", token, false, "application/x-www-form-urlencoded", data, 0, data.Length);
+        return GetResponse(req);
+    }
+
+    static string HttpGet(string URL, string token)
+    {
+        HttpWebRequest req = GenerateRequest(URL, "GET", token);
+        return GetResponse(req);
+    }
+
+    static string HttpPut(string URL, string token, byte[] data, int offset=0,int length=-1)
+    {
+        if (length < 0) length = data.Length;
+        HttpWebRequest req = GenerateRequest(URL, "PUT", token, true, "application/octet-stream", data, offset, length);
+        return GetResponse(req);
+    }
+
     static void GetAccountInfo()
     {
-        HttpWebRequest req = GenerateRequest("https://api.dropboxapi.com/1/account/info", "GET", token);
-        string respHTML = GetResponse(req);
+        string respHTML = HttpGet("https://api.dropboxapi.com/1/account/info", token);
         DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(Person));
         Person personinfo = (Person)ser.ReadObject(new MemoryStream(Encoding.ASCII.GetBytes(respHTML)));
         Console.WriteLine(personinfo.display_name + " "+ personinfo.email + " "+ personinfo.quota_info.normal + "/" + personinfo.quota_info.quota);
     }
 
-
     static void SimpleUpload(int size = 1024*1024)
     {
         RandomFile(size, "simple.txt");
-        byte[] data = File.ReadAllBytes("simple.txt");
-        HttpWebRequest req = GenerateRequest("https://content.dropboxapi.com/1/files_put/auto/simple.txt?",
-            "PUT", token, true, "application/octet-stream", data, 0, data.Length);
-        string respHTML = GetResponse(req);
+        string respHTML = HttpPut("https://content.dropboxapi.com/1/files_put/auto/simple.txt?", token, File.ReadAllBytes("simple.txt"));
         File.Delete("simple.txt");
     }
 
     static void GetDownloadLink()
     {
-        HttpWebRequest req = GenerateRequest("https://api.dropboxapi.com/1/media/auto/simple.txt", "POST", token);
-        string respHTML = GetResponse(req);
+        string respHTML = HttpPost("https://api.dropboxapi.com/1/media/auto/simple.txt", "", token);
         DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(DownloadLink));
         DownloadLink link = (DownloadLink)ser.ReadObject(new MemoryStream(Encoding.ASCII.GetBytes(respHTML)));
         Console.WriteLine(link.url);
@@ -158,9 +172,7 @@ class Module1
     static void ChunkedUpload(int size = 1024 * 1024, int parts = 10)
     {
         RandomFile(size, "chunked.txt");
-        HttpWebRequest req = GenerateRequest("https://content.dropboxapi.com/1/chunked_upload?", 
-            "PUT", token, false, "application/octet-stream", new byte[0]);
-        string respHTML = GetResponse(req);
+        string respHTML = HttpPut("https://content.dropboxapi.com/1/chunked_upload?", token, new byte[0]);
         DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(ChunkedUploadTask));
         ChunkedUploadTask task = (ChunkedUploadTask)ser.ReadObject(new MemoryStream(Encoding.ASCII.GetBytes(respHTML)));
 
@@ -168,25 +180,18 @@ class Module1
         while (task.offset < data.Length)
         {
             int uplen = Math.Min(size / parts, data.Length - (int)task.offset);
-            req = GenerateRequest("https://content.dropboxapi.com/1/chunked_upload?upload_id=" + task.upload_id + "&offset=" + task.offset,
-                "PUT", token, true, "application/octet-stream", data,(int)task.offset,uplen);
-            respHTML = GetResponse(req);
+            respHTML = HttpPut("https://content.dropboxapi.com/1/chunked_upload?upload_id=" + task.upload_id + "&offset=" + task.offset,
+                token,data, (int)task.offset, uplen);
             task = (ChunkedUploadTask)ser.ReadObject(new MemoryStream(Encoding.ASCII.GetBytes(respHTML)));
         }
-        
-        data = Encoding.ASCII.GetBytes("upload_id=" + task.upload_id);
-        req = GenerateRequest("https://content.dropboxapi.com/1/commit_chunked_upload/auto/chunked.txt?",
-            "POST", token, false, "application/x-www-form-urlencoded", data, 0, data.Length);
-        respHTML = GetResponse(req);
+
+        respHTML = HttpPost("https://content.dropboxapi.com/1/commit_chunked_upload/auto/chunked.txt?", "upload_id=" + task.upload_id, token);
         File.Delete("chunked.txt");
     }
 
     static string OfflineDownload(string url,string path)
     {
-        byte[] data = Encoding.ASCII.GetBytes("url=" + url);
-        HttpWebRequest req = GenerateRequest("https://api.dropboxapi.com/1/save_url/auto/" + path + "?",
-            "POST", token, false, "application/x-www-form-urlencoded", data, 0, data.Length);
-        string respHTML = GetResponse(req);
+        string respHTML = HttpPost("https://api.dropboxapi.com/1/save_url/auto/" + path + "?", "url=" + url, token);
         DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(OfflineTask));
         OfflineTask link = (OfflineTask)ser.ReadObject(new MemoryStream(Encoding.ASCII.GetBytes(respHTML)));
         return link.job;
@@ -194,8 +199,7 @@ class Module1
 
     static string QueryOffline(string job)
     {
-        HttpWebRequest req = GenerateRequest("https://api.dropboxapi.com/1/save_url_job/"+job, "GET", token);
-        string respHTML = GetResponse(req);
+        string respHTML = HttpGet("https://api.dropboxapi.com/1/save_url_job/" + job, token);
         DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(OfflineStatus));
         OfflineStatus status = (OfflineStatus)ser.ReadObject(new MemoryStream(Encoding.ASCII.GetBytes(respHTML)));
         return status.status;
@@ -203,10 +207,7 @@ class Module1
 
     static void Delete(string path)
     {
-        byte[] data = Encoding.ASCII.GetBytes("root=auto&path="+path);
-        HttpWebRequest req = GenerateRequest("https://api.dropboxapi.com/1/fileops/delete?",
-            "POST", token, false, "application/x-www-form-urlencoded", data, 0, data.Length);
-        string respHTML = GetResponse(req);
+        string respHTML = HttpPost("https://api.dropboxapi.com/1/fileops/delete?", "root=auto&path=" + path, token);
     }
 
     static void Main(string[] args)
