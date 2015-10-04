@@ -1,8 +1,11 @@
 ﻿Here is your client ID
-920585866822-u86m8vbesli3ol8vrasur2k28crm3f7b.apps.googleusercontent.com 
+920585866822-d71k4q781qqr4rhc17jkicjdbdcn9b9d.apps.googleusercontent.com
 
 Here is your client secret
-tsVPMem8GL9elbDspjfjwCP5 
+_9rOg4xXuBQ8vDQblIcv4uZ5
+
+验证的方法和onedrive类似。
+https://developers.google.com/identity/protocols/OAuth2WebServer
 
 
 https://developers.google.com/drive/web/about-sdk
