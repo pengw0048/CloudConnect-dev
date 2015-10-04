@@ -1,9 +1,9 @@
-﻿using System;
-using System.Net;
+﻿using System.IO;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Runtime.Serialization;
-using System.IO;
+using System;
+using Util = CCUtil.CCUtil;
 
 namespace HelloOnedrive
 {
@@ -110,91 +110,9 @@ namespace HelloOnedrive
 
         };
 
-        static string GetResponse(HttpWebRequest req, bool GetLocation = false)
-        {
-            HttpWebResponse res = null;
-            try {
-                res = (HttpWebResponse)req.GetResponse();
-            } catch (WebException e) {
-                StreamReader ereader = new StreamReader(e.Response.GetResponseStream(), Encoding.GetEncoding("utf-8"));
-                string erespHTML = ereader.ReadToEnd();
-                Console.WriteLine(erespHTML);
-                throw new Exception(erespHTML);
-            }
-            if (GetLocation)
-            { 
-                Console.WriteLine("Location: " + res.Headers["Location"]);
-                return res.Headers["Location"];
-            }
-            StreamReader reader = new StreamReader(res.GetResponseStream(), Encoding.GetEncoding("utf-8"));
-            string respHTML = reader.ReadToEnd();
-            res.Close();
-            Console.WriteLine(respHTML);
-            return respHTML;
-        }
-
-        static void RandomFile(int size, string fn)
-        {
-            StreamWriter sw = new StreamWriter(fn);
-            sw.WriteLine("start");
-            char c = 'a';
-            for (int i = 0; i < size; i++)
-            {
-                sw.Write(c);
-                c++;
-                if (c > 'z') c = 'a';
-            }
-            sw.WriteLine("end");
-            sw.WriteLine(DateTime.Now.ToString());
-            sw.Close();
-        }
-
-        static HttpWebRequest GenerateRequest(string URL, string Method, string token, bool KeepAlive = false, string ContentType = null, byte[] data = null, int offset = 0, int length = 0, string ContentRange = null, bool PreferAsync = false)
-        {
-            Uri httpUrl = new Uri(URL);
-            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(httpUrl);
-            req.Method = Method;
-            if(token != null) req.Headers.Add("Authorization", "Bearer " + token);
-            req.KeepAlive = KeepAlive;
-            if (ContentType != null) req.ContentType = ContentType;
-            if (ContentRange != null) req.Headers.Add("Content-Range", ContentRange);
-            if (PreferAsync == true) req.Headers.Add("Prefer", "respond-async");
-            if (data != null)
-            {
-                req.ContentLength = length;
-                Stream stream = req.GetRequestStream();
-                stream.Write(data, offset, length);
-                stream.Close();
-            }
-            return req;
-        }
-
-        static string HttpPost(string URL, string post, string token, bool PreferAsync = false, bool GetLocation = false, bool isJson = false, bool AllowAutoRedirect = true)
-        {
-            byte[] data = Encoding.ASCII.GetBytes(post);
-            HttpWebRequest req = GenerateRequest(URL, "POST", token, false, isJson ? "application/json" : "application/x-www-form-urlencoded", data, 0, data.Length, null, PreferAsync);
-            if (AllowAutoRedirect == false) req.AllowAutoRedirect = false;
-            return GetResponse(req, GetLocation);
-        }
-
-        static string HttpGet(string URL, string token, bool GetLocation = false, bool AllowAutoRedirect = true)
-        {
-            HttpWebRequest req = GenerateRequest(URL, "GET", token);
-            if (AllowAutoRedirect == false) req.AllowAutoRedirect = false;
-            return GetResponse(req, GetLocation);
-        }
-
-        static string HttpPut(string URL, string token, byte[] data, int offset = 0, int length = -1, string ContentRange = null, bool AllowAutoRedirect = true)
-        {
-            if (length < 0) length = data.Length;
-            HttpWebRequest req = GenerateRequest(URL, "PUT", token, true, "application/octet-stream", data, offset, length, ContentRange);
-            if (AllowAutoRedirect == false) req.AllowAutoRedirect = false;
-            return GetResponse(req);
-        }
-
         static string GetToken(string refresh_token)
         {
-            string respHTML = HttpPost("https://login.live.com/oauth20_token.srf", "client_id=" + clientid + "&redirect_uri=" + Uri.EscapeUriString( redirect_uri) + "&client_secret=" + secret + "&refresh_token=" + refresh_token + "&grant_type=refresh_token", null);
+            string respHTML = Util.HttpPost("https://login.live.com/oauth20_token.srf", "client_id=" + clientid + "&redirect_uri=" + Uri.EscapeUriString( redirect_uri) + "&client_secret=" + secret + "&refresh_token=" + refresh_token + "&grant_type=refresh_token", null);
             DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(TokenResponse));
             TokenResponse personinfo = (TokenResponse)ser.ReadObject(new MemoryStream(Encoding.ASCII.GetBytes(respHTML)));
             return personinfo.access_token;
@@ -202,7 +120,7 @@ namespace HelloOnedrive
 
         static void GetBasicInfo(string token)
         {
-            string respHTML = HttpGet("https://api.onedrive.com/v1.0/drive",token);
+            string respHTML = Util.HttpGet("https://api.onedrive.com/v1.0/drive",token);
             DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(DriveResource));
             DriveResource driveinfo = (DriveResource)ser.ReadObject(new MemoryStream(Encoding.ASCII.GetBytes(respHTML)));
             Console.WriteLine(driveinfo.owner.user.displayName + " " + driveinfo.quota.remaining + "/" + driveinfo.quota.total);
@@ -210,15 +128,15 @@ namespace HelloOnedrive
 
         static void SimpleUpload(string token, int size = 1024 * 1024)
         {
-            RandomFile(size, "simple.txt");
-            string respHTML = HttpPut("https://api.onedrive.com/v1.0/drive/root:/simple.txt:/content", token, File.ReadAllBytes("simple.txt"));
+            Util.RandomFile(size, "simple.txt");
+            string respHTML = Util.HttpPut("https://api.onedrive.com/v1.0/drive/root:/simple.txt:/content", token, File.ReadAllBytes("simple.txt"));
             File.Delete("simple.txt");
         }
 
         static void ChunkedUpload(string token,int size = 1024 * 1024, int parts = 10)
         {
-            RandomFile(size, "chunked.txt");
-            string respHTML = HttpPost("https://api.onedrive.com/v1.0/drive/root:/chunked.txt:/upload.createSession", "", token);
+            Util.RandomFile(size, "chunked.txt");
+            string respHTML = Util.HttpPost("https://api.onedrive.com/v1.0/drive/root:/chunked.txt:/upload.createSession", "", token);
             DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(UploadSession));
             UploadSession task = (UploadSession)ser.ReadObject(new MemoryStream(Encoding.ASCII.GetBytes(respHTML)));
 
@@ -227,7 +145,7 @@ namespace HelloOnedrive
             while (offset < data.Length)
             {
                 int uplen = Math.Min(size / parts, data.Length - offset);
-                respHTML = HttpPut(task.uploadUrl, token, data, offset, uplen,
+                respHTML = Util.HttpPut(task.uploadUrl, token, data, offset, uplen,
                     "bytes " + offset + "-" + (offset + uplen - 1) + "/" + data.Length);
                 if (offset + uplen < data.Length)
                 {
@@ -243,7 +161,7 @@ namespace HelloOnedrive
 
         static string OfflineDownload(string url, string name, string token)
         {
-            string location = HttpPost("https://api.onedrive.com/v1.0/drive/root/children",
+            string location = Util.HttpPost("https://api.onedrive.com/v1.0/drive/root/children",
                 "{ \"@content.sourceUrl\": \"" + url + "\", \"name\": \"" + name + "\", \"file\": { } }"
                 , token, true, true, true, false);
             return location;
@@ -251,10 +169,10 @@ namespace HelloOnedrive
 
         static string QueryOffline(string job, string token)
         {
-            string respHTML = HttpGet(job, token, false, false);
+            string respHTML = Util.HttpGet(job, token, false, false);
             if (respHTML.Length < 3)
             {
-                return HttpGet(job, token, true);
+                return Util.HttpGet(job, token, true);
             }
             DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(AsyncOperationStatus));
             AsyncOperationStatus status = (AsyncOperationStatus)ser.ReadObject(new MemoryStream(Encoding.ASCII.GetBytes(respHTML)));
@@ -263,13 +181,12 @@ namespace HelloOnedrive
 
         static void Delete(string path, string token)
         {
-            HttpWebRequest req = GenerateRequest("https://api.onedrive.com/v1.0/drive/root:/" + path, "DELETE", token);
-            GetResponse(req);
+            Util.HttpDelete("https://api.onedrive.com/v1.0/drive/root:/" + path, token);
         }
 
         static string GetDownloadLink(string token)
         {
-            return HttpGet("https://api.onedrive.com/v1.0/drive/root:/simple.txt:/content", token, true, false);
+            return Util.HttpGet("https://api.onedrive.com/v1.0/drive/root:/simple.txt:/content", token, true, false);
         }
 
         static void Main(string[] args)

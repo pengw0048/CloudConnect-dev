@@ -46,6 +46,9 @@
   <PropertyGroup>
     <OptionInfer>On</OptionInfer>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'NoMake|AnyCPU'">
+    <OutputPath>bin\NoMake\</OutputPath>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="JHSoftware.DnsClient">
       <HintPath>..\JHSoftware.DnsClient.dll</HintPath>

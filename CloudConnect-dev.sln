@@ -1,0 +1,52 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "DNSLookup", "DNSLookup\DNSLookup.vbproj", "{683A99B3-7F4D-45A1-95CD-41B6AC36CBD6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DNSLookupCS", "DNSLookupCS\DNSLookupCS.csproj", "{7665836F-443B-4AEF-8AD7-7FAAA15285ED}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelloDropbox", "HelloDropbox\HelloDropbox.csproj", "{14F0D36E-57EA-4175-818D-ACDD031B9111}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelloGoogledrive", "HelloGoogledrive\HelloGoogledrive.csproj", "{923486FA-B9CC-4CCC-9664-26900B154BC1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelloOnedrive", "HelloOnedrive\HelloOnedrive.csproj", "{69E7C339-A10F-4ACE-BFB0-A829BF3C7C40}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{531FD818-22E9-4B32-B3FC-B653D5443D08}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{683A99B3-7F4D-45A1-95CD-41B6AC36CBD6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{683A99B3-7F4D-45A1-95CD-41B6AC36CBD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{683A99B3-7F4D-45A1-95CD-41B6AC36CBD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{683A99B3-7F4D-45A1-95CD-41B6AC36CBD6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7665836F-443B-4AEF-8AD7-7FAAA15285ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7665836F-443B-4AEF-8AD7-7FAAA15285ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7665836F-443B-4AEF-8AD7-7FAAA15285ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7665836F-443B-4AEF-8AD7-7FAAA15285ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14F0D36E-57EA-4175-818D-ACDD031B9111}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14F0D36E-57EA-4175-818D-ACDD031B9111}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14F0D36E-57EA-4175-818D-ACDD031B9111}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14F0D36E-57EA-4175-818D-ACDD031B9111}.Release|Any CPU.Build.0 = Release|Any CPU
+		{923486FA-B9CC-4CCC-9664-26900B154BC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{923486FA-B9CC-4CCC-9664-26900B154BC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{923486FA-B9CC-4CCC-9664-26900B154BC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{923486FA-B9CC-4CCC-9664-26900B154BC1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69E7C339-A10F-4ACE-BFB0-A829BF3C7C40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69E7C339-A10F-4ACE-BFB0-A829BF3C7C40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69E7C339-A10F-4ACE-BFB0-A829BF3C7C40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69E7C339-A10F-4ACE-BFB0-A829BF3C7C40}.Release|Any CPU.Build.0 = Release|Any CPU
+		{531FD818-22E9-4B32-B3FC-B653D5443D08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{531FD818-22E9-4B32-B3FC-B653D5443D08}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{531FD818-22E9-4B32-B3FC-B653D5443D08}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{531FD818-22E9-4B32-B3FC-B653D5443D08}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

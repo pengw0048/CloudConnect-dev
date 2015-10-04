@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{923486FA-B9CC-4CCC-9664-26900B154BC1}</ProjectGuid>
+    <ProjectGuid>{14F0D36E-57EA-4175-818D-ACDD031B9111}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>HelloGoogledrive</RootNamespace>
-    <AssemblyName>HelloGoogledrive</AssemblyName>
+    <RootNamespace>HelloDropboxCS</RootNamespace>
+    <AssemblyName>HelloDropboxCS</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -32,7 +32,13 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'NoMake|AnyCPU'">
+    <OutputPath>bin\NoMake\</OutputPath>
+  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="JHSoftware.DnsClient">
+      <HintPath>..\lib\JHSoftware.DnsClient.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
@@ -49,6 +55,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{531fd818-22e9-4b32-b3fc-b653d5443d08}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
