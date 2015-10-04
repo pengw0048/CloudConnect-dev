@@ -136,6 +136,8 @@ When you'd like to make API calls to Dropbox, simply include the authorization h
 离线下载？https://api.dropboxapi.com/1/save_url/auto/<path>
   url: The URL to be fetched.
   Returns: {"status": "PENDING", "job": "PEiuxsfaISEAAAAAAADwzg"}
+  
+  似乎对于任意大小的文件（实验1M~1G），都是一次请求、按顺序下载的，虽然离线下载用的服务器似乎不同。
 查询离线下载状态https://api.dropboxapi.com/1/save_url_job/<job-id>
   Returns: A dictionary with a status field with one of the following values:
   PENDING – The job has not yet started.

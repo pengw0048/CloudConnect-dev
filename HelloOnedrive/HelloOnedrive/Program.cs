@@ -251,7 +251,7 @@ namespace HelloOnedrive
 
         static string QueryOffline(string job, string token)
         {
-            string respHTML = HttpGet(job, token, false);
+            string respHTML = HttpGet(job, token, false, false);
             if (respHTML.Length < 3)
             {
                 return HttpGet(job, token, true);

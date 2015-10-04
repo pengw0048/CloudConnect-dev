@@ -1,4 +1,11 @@
-﻿https://developers.google.com/drive/web/about-sdk
+﻿Here is your client ID
+920585866822-u86m8vbesli3ol8vrasur2k28crm3f7b.apps.googleusercontent.com 
+
+Here is your client secret
+tsVPMem8GL9elbDspjfjwCP5 
+
+
+https://developers.google.com/drive/web/about-sdk
 Simple upload
   POST /upload/drive/v2/files?uploadType=media HTTP/1.1
   Host: www.googleapis.com
