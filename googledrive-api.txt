@@ -4,6 +4,13 @@
 Here is your client secret
 _9rOg4xXuBQ8vDQblIcv4uZ5
 
+测试用的refresh token：1/8N6Yf_f-7KH0ms0fNH01zA4DRajTDradB6IxKMLU2RRIgOrJDtdun6zK6XiATCKT
+
+登录页：https://accounts.google.com/o/oauth2/auth?response_type=code&access_type=offline&client_id=920585866822-d71k4q781qqr4rhc17jkicjdbdcn9b9d.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Fstomakun.tk%2Fecho.php&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive%20profile
+获得code后，马上换refresh token：
+Console.WriteLine(HttpPost("https://www.googleapis.com/oauth2/v3/token", "client_id=920585866822-d71k4q781qqr4rhc17jkicjdbdcn9b9d.apps.googleusercontent.com&client_secret=_9rOg4xXuBQ8vDQblIcv4uZ5&redirect_uri=http://stomakun.tk/echo.php&grant_type=authorization_code&code=[刚才的code]", ""));
+之后保存refresh token，用时获得access token，见demo
+
 验证的方法和onedrive类似。
 https://developers.google.com/identity/protocols/OAuth2WebServer
 
