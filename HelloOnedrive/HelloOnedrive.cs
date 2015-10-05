@@ -7,7 +7,7 @@ using Util = CCUtil.CCUtil;
 
 namespace HelloOnedrive
 {
-    class Program
+    class HelloOnedrive
     {
         private static string clientid = "000000004816FA26";
         private static string secret = "UBVcd-hCr6JYFnldXyY5pn85T2rkUGMW";
@@ -112,7 +112,7 @@ namespace HelloOnedrive
 
         static string GetToken(string refresh_token)
         {
-            string respHTML = Util.HttpPost("https://login.live.com/oauth20_token.srf", "client_id=" + clientid + "&redirect_uri=" + Uri.EscapeUriString( redirect_uri) + "&client_secret=" + secret + "&refresh_token=" + refresh_token + "&grant_type=refresh_token", null);
+            string respHTML = Util.HttpPost("https://login.live.com/oauth20_token.srf", "client_id=" + clientid + "&redirect_uri=" + Uri.EscapeUriString( redirect_uri) + "&client_secret=" + secret + "&refresh_token=" + refresh_token + "&grant_type=refresh_token");
             DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(TokenResponse));
             TokenResponse personinfo = (TokenResponse)ser.ReadObject(new MemoryStream(Encoding.ASCII.GetBytes(respHTML)));
             return personinfo.access_token;

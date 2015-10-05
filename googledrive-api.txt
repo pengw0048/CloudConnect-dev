@@ -15,7 +15,11 @@ Console.WriteLine(HttpPost("https://www.googleapis.com/oauth2/v3/token", "client
 https://developers.google.com/identity/protocols/OAuth2WebServer
 
 
+所以对google drive也只需要考虑www.googleapis.com一个域名就可以了。
+
+
 https://developers.google.com/drive/web/about-sdk
+Google Drive的文件组织方式不太一样。每个资源（文件和文件夹）都对应一个id，文件名之类的只是一个属性。比如用simple upload，只能上传文件内容，然后得到一个返回的文件属性（其中包含id），以后就通过这个id来访问此文件。事实上更多操作也都是通过id完成的。那么我们应用的时候记录一下文件对应的id就好，不要去管文件名了。
 Simple upload
   POST /upload/drive/v2/files?uploadType=media HTTP/1.1
   Host: www.googleapis.com
@@ -52,7 +56,7 @@ Resumable upload 也要按顺序上传
   Content-Range: bytes 0-524287/2000000
   
   bytes 0-524288
-  每个块（除最后一个）必须是256 KB的倍数
+  每个块（除最后一个）至少是256 KB
  Resume an interrupted upload
   Query the current status of the upload by issuing an empty PUT request to the upload URI. For this request, the HTTP headers should include a Content-Range header indicating that the current position in the file is unknown.  For example, set the Content-Range to */2000000 if your total file length is 2,000,000. If you don't know the full size of the file, set the Content-Range to */*.
 
@@ -62,3 +66,4 @@ Downloading a file - Preferred method: using alt=media
   Range: bytes=500-999
 Using gzip
 
+似乎这个就是下载的服务器的域名，没有再跳转。

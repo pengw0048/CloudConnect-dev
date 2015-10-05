@@ -7,7 +7,7 @@ using Util = CCUtil.CCUtil;
 
 namespace HelloDropbox
 {
-    class Program
+    class HelloDropbox
     {
 
         private static string token = "K4g_u85PlIIAAAAAAAAAFKg_ygQtYqu0uqH15MBMzEs4YDnqmJ61U65tzdC-l6C_";

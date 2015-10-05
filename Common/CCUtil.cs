@@ -7,7 +7,7 @@ namespace CCUtil
 {
     public class CCUtil
     {
-        public static string GetResponse(HttpWebRequest req, bool GetLocation = false)
+        public static string GetResponse(HttpWebRequest req, bool GetLocation = false, bool GetRange = false)
         {
             HttpWebResponse res = null;
             try
@@ -25,6 +25,11 @@ namespace CCUtil
             {
                 Console.WriteLine("Location: " + res.Headers["Location"]);
                 return res.Headers["Location"];
+            }
+            if (GetRange && res.ContentLength == 0)
+            {
+                Console.WriteLine("Range: " + res.Headers["Range"]);
+                return res.Headers["Range"];
             }
             StreamReader reader = new StreamReader(res.GetResponseStream(), Encoding.GetEncoding("utf-8"));
             string respHTML = reader.ReadToEnd();
@@ -69,12 +74,19 @@ namespace CCUtil
             return req;
         }
 
-        public static string HttpPost(string URL, string post, string token, bool PreferAsync = false, bool GetLocation = false, bool isJson = false, bool AllowAutoRedirect = true)
+        public static string HttpPost(string URL, string post, string token = "", bool PreferAsync = false, bool GetLocation = false, bool isJson = false, bool AllowAutoRedirect = true)
         {
             byte[] data = Encoding.ASCII.GetBytes(post);
             HttpWebRequest req = GenerateRequest(URL, "POST", token, false, isJson ? "application/json" : "application/x-www-form-urlencoded", data, 0, data.Length, null, PreferAsync);
             if (AllowAutoRedirect == false) req.AllowAutoRedirect = false;
             return GetResponse(req, GetLocation);
+        }
+
+        public static string HttpPost(string URL, string token, byte[] data, int offset=0, int length = -1)
+        {
+            if (length == -1) length = data.Length;
+            HttpWebRequest req = GenerateRequest(URL, "POST", token, false, "application/octet-stream", data, 0, data.Length);
+            return GetResponse(req);
         }
 
         public static string HttpGet(string URL, string token, bool GetLocation = false, bool AllowAutoRedirect = true)
@@ -84,12 +96,12 @@ namespace CCUtil
             return GetResponse(req, GetLocation);
         }
 
-        public static string HttpPut(string URL, string token, byte[] data, int offset = 0, int length = -1, string ContentRange = null, bool AllowAutoRedirect = true)
+        public static string HttpPut(string URL, string token, byte[] data, int offset = 0, int length = -1, string ContentRange = null, bool AllowAutoRedirect = true, bool GetRange =false)
         {
             if (length < 0) length = data.Length;
             HttpWebRequest req = GenerateRequest(URL, "PUT", token, true, "application/octet-stream", data, offset, length, ContentRange);
             if (AllowAutoRedirect == false) req.AllowAutoRedirect = false;
-            return GetResponse(req);
+            return GetResponse(req, false, true);
         }
 
         public static void HttpDelete(string url, string token)
