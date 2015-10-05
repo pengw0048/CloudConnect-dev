@@ -12,9 +12,12 @@ access token一般过期时间为1小时。
 我这里显示的分段上传地址是"uploadUrl":"https://api.onedrive.com/up/....
 
 下载时会重定向到的一个地址是 https://public.bn1302.livefilestore.com/... 这里需要做很多测试才能确定所有可能性
+  貌似只有1301-1304这几种域名，至于是否可以请求任意一个，需要实验。
 
 离线下载 目前看的情况是：如果任务完成，会返回一个错误信息，而非文档所说的一个location。无伤大雅。
   似乎对于任意大小的文件（实验1M~1G），都是一次请求、按顺序下载的。
+
+删除文件只能移到回收站，没有发现彻底删除或清空回收站的api。
 
 
 https://dev.onedrive.com/README.htm

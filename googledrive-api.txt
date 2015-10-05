@@ -17,6 +17,8 @@ https://developers.google.com/identity/protocols/OAuth2WebServer
 
 所以对google drive也只需要考虑www.googleapis.com一个域名就可以了。
 
+删除文件用DELETE是永久的。
+
 
 https://developers.google.com/drive/web/about-sdk
 Google Drive的文件组织方式不太一样。每个资源（文件和文件夹）都对应一个id，文件名之类的只是一个属性。比如用simple upload，只能上传文件内容，然后得到一个返回的文件属性（其中包含id），以后就通过这个id来访问此文件。事实上更多操作也都是通过id完成的。那么我们应用的时候记录一下文件对应的id就好，不要去管文件名了。
