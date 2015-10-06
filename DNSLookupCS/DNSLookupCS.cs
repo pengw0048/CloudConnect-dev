@@ -52,18 +52,25 @@ namespace DNSLookupCS
             }
             Console.Write("Domain: ");
             ThreadClass.domain = Console.ReadLine();
-            
+
+            Thread[] threads = new Thread[50];
             for(int i = 0; i < 50; i++)
             {
                 ThreadClass aThreadClass = new ThreadClass();
-                Thread aThread = new Thread(new ThreadStart(aThreadClass.ThreadFunction));
-                aThread.Start();
+                threads[i] = new Thread(new ThreadStart(aThreadClass.ThreadFunction));
+                threads[i].Start();
             }
             while (ThreadClass.pos < ThreadClass.count)
             {
-                Thread.Sleep(3000);
+                Thread.Sleep(2000);
             }
-            Thread.Sleep(10000);
+            for (int i = 0; i < 50; i++)
+            {
+                try {
+                    threads[i].Abort();
+                }
+                catch (Exception) { }
+            }
             StreamWriter sw= new StreamWriter(ThreadClass.domain + ".txt");
             foreach (string ip in ThreadClass.res)
             {
