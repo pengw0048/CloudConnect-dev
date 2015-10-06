@@ -2,6 +2,9 @@
 using System.IO;
 using System.Text;
 using System;
+using System.Collections.Generic;
+using System.Net.NetworkInformation;
+using System.Diagnostics;
 
 namespace CCUtil
 {
@@ -108,6 +111,82 @@ namespace CCUtil
         {
             HttpWebRequest req = GenerateRequest(url, "DELETE", token);
             GetResponse(req);
+        }
+
+        public static List<int> Ping(List<string> ips)
+        {
+            List<int> RTTs = new List<int>();
+            Ping ping = new Ping();
+            foreach (string ip in ips)
+            {
+                int rtt = -1;
+                try
+                {
+                    PingReply reply = ping.Send(IPAddress.Parse(ip));
+                    if (reply.Status == IPStatus.Success) rtt = (int)reply.RoundtripTime;
+                    Console.WriteLine(ip + " " + rtt);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+                RTTs.Add(rtt);
+            }
+            return RTTs;
+        }
+
+        public static List<int> PingWithHttpGet(List<string> ips, int repeats = 4, int timeout = 2000)
+        {
+            List<int> RTTs = new List<int>();
+            Stopwatch watch = new Stopwatch();
+            foreach (string ip in ips)
+            {
+                int rtt = 0;
+                for (int i = 0; i < repeats; i++)
+                {
+                    try
+                    {
+                        HttpWebRequest req = GenerateRequest("http://" + ip + "/", "GET", null);
+                        req.Timeout = timeout;
+                        watch.Restart();
+                        try
+                        {
+                            req.GetResponse();
+                        }
+                        catch (WebException) { }
+                        watch.Stop();
+                        if (watch.ElapsedMilliseconds >= timeout - 10)
+                        {
+                            rtt = -repeats;
+                            break;
+                        }
+                        rtt += (int)watch.ElapsedMilliseconds;
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.ToString());
+                        rtt = -repeats;
+                        break;
+                    }
+                }
+                rtt /= repeats;
+                Console.WriteLine(ip + " " + rtt);
+                RTTs.Add(rtt);
+            }
+            return RTTs;
+        }
+
+        public static List<string> ReadLines(string file, int minlength = 0)
+        {
+            List<string> lines = new List<string>();
+            StreamReader sr = new StreamReader(file);
+            while (!sr.EndOfStream)
+            {
+                string ts = sr.ReadLine();
+                if (ts.Length >= minlength) lines.Add(ts);
+            }
+            sr.Close();
+            return lines;
         }
     }
 }

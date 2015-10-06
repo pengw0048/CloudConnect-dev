@@ -1,4 +1,6 @@
-﻿https://www.dropbox.com/developers/core/docs
+﻿content.dropboxapi.com不允许被ping。可以改成http get...
+
+https://www.dropbox.com/developers/core/docs
 When you'd like to make API calls to Dropbox, simply include the authorization header, "Authorization: Bearer <YOUR_ACCESS_TOKEN_HERE>", with each request.
 认证：https://www.dropbox.com/1/oauth2/authorize
   response_type = token
