@@ -15,7 +15,7 @@ namespace DNSLookupCS
         public static int count = 0;
         public static string domain;
         public static string[] dns = new string[120000];
-        public static StreamWriter sw;
+        public static HashSet<string> res = new HashSet<string>();
         public void ThreadFunction()
         {
             while (pos < count)
@@ -30,7 +30,7 @@ namespace DNSLookupCS
                     IPAddress[] ips = JHSoftware.DnsClient.LookupHost(domain, JHSoftware.DnsClient.IPVersion.IPv4, opt);
                     foreach (IPAddress ip in ips)
                     {
-                        sw.WriteLine(ip);
+                        res.Add(ip.ToString());
                     }
                 }
                 catch (Exception ex)
@@ -52,8 +52,7 @@ namespace DNSLookupCS
             }
             Console.Write("Domain: ");
             ThreadClass.domain = Console.ReadLine();
-
-            ThreadClass.sw = new StreamWriter(ThreadClass.domain + ".txt");
+            
             for(int i = 0; i < 50; i++)
             {
                 ThreadClass aThreadClass = new ThreadClass();
@@ -64,7 +63,13 @@ namespace DNSLookupCS
             {
                 Thread.Sleep(3000);
             }
-            Thread.Sleep(3000);
+            Thread.Sleep(10000);
+            StreamWriter sw= new StreamWriter(ThreadClass.domain + ".txt");
+            foreach (string ip in ThreadClass.res)
+            {
+                sw.WriteLine(ip);
+            }
+            sw.Close();
         }
     }
 }
