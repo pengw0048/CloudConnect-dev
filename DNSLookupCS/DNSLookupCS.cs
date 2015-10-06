@@ -20,7 +20,7 @@ namespace DNSLookupCS
         {
             while (pos < count)
             {
-                if (pos % 100 == 0) Console.WriteLine(pos);
+                if (pos % 1000 == 0) Console.WriteLine(pos);
                 string tdns = dns[pos++];
                 if (tdns.Contains(":")) continue;
                 try
@@ -35,12 +35,12 @@ namespace DNSLookupCS
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.ToString());
+                    //Console.WriteLine(ex.ToString());
                 }
             }
         }
     }
-    class Program
+    class DNSLookupCS
     {
         static void Main(string[] args)
         {
@@ -54,7 +54,7 @@ namespace DNSLookupCS
             ThreadClass.domain = Console.ReadLine();
 
             ThreadClass.sw = new StreamWriter(ThreadClass.domain + ".txt");
-            for(int i = 0; i < 30; i++)
+            for(int i = 0; i < 50; i++)
             {
                 ThreadClass aThreadClass = new ThreadClass();
                 Thread aThread = new Thread(new ThreadStart(aThreadClass.ThreadFunction));
