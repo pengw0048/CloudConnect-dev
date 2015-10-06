@@ -5,40 +5,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace DNSLookupCS
 {
-    class Program
+    class ThreadClass
     {
-        static void Main(string[] args)
+        public static int pos = 0;
+        public static int count = 0;
+        public static string domain;
+        public static string[] dns = new string[120000];
+        public static StreamWriter sw;
+        public void ThreadFunction()
         {
-            StreamReader sr = new StreamReader("nameservers.txt");
-            string[] dns = new string[120000];
-            int count = 0;
-            while (!sr.EndOfStream)
+            while (pos < count)
             {
-                string ts = sr.ReadLine();
-                if (ts.Length > 4) dns[count++] = ts;
-            }
-            Console.Write("Domain: ");
-            string domain = Console.ReadLine();
-            Console.Write("Start: ");
-            int start = int.Parse(Console.ReadLine());
-            Console.Write("End: ");
-            int end = int.Parse(Console.ReadLine());
-            HashSet<string> ipset = new HashSet<string>();
-            for(int i=start;i<=Math.Min(end,count-1); i++)
-            {
-                if (dns[i].Contains(":")) continue;
-                Console.WriteLine(i);
+                if (pos % 100 == 0) Console.WriteLine(pos);
+                string tdns = dns[pos++];
+                if (tdns.Contains(":")) continue;
                 try
                 {
                     JHSoftware.DnsClient.RequestOptions opt = new JHSoftware.DnsClient.RequestOptions();
-                    opt.DnsServers = new IPAddress[] { IPAddress.Parse(dns[i]) };
+                    opt.DnsServers = new IPAddress[] { IPAddress.Parse(tdns) };
                     IPAddress[] ips = JHSoftware.DnsClient.LookupHost(domain, JHSoftware.DnsClient.IPVersion.IPv4, opt);
                     foreach (IPAddress ip in ips)
                     {
-                        ipset.Add(ip.ToString());
+                        sw.WriteLine(ip);
                     }
                 }
                 catch (Exception ex)
@@ -46,12 +38,33 @@ namespace DNSLookupCS
                     Console.WriteLine(ex.ToString());
                 }
             }
-            StreamWriter sw = new StreamWriter(domain +start+"_"+end+ ".txt");
-            foreach (string ip in ipset)
+        }
+    }
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            StreamReader sr = new StreamReader("nameservers.txt");
+            while (!sr.EndOfStream)
             {
-                sw.WriteLine(ip);
+                string ts = sr.ReadLine();
+                if (ts.Length > 4) ThreadClass.dns[ThreadClass.count++] = ts;
             }
-            sw.Close();
+            Console.Write("Domain: ");
+            ThreadClass.domain = Console.ReadLine();
+
+            ThreadClass.sw = new StreamWriter(ThreadClass.domain + ".txt");
+            for(int i = 0; i < 30; i++)
+            {
+                ThreadClass aThreadClass = new ThreadClass();
+                Thread aThread = new Thread(new ThreadStart(aThreadClass.ThreadFunction));
+                aThread.Start();
+            }
+            while (ThreadClass.pos < ThreadClass.count)
+            {
+                Thread.Sleep(3000);
+            }
+            Thread.Sleep(3000);
         }
     }
 }
