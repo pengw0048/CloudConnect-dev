@@ -64,7 +64,7 @@ namespace CCUtil
             sw.Close();
         }
 
-        public static HttpWebRequest GenerateRequest(string URL, string Method, string token, bool KeepAlive = false, string ContentType = null, byte[] data = null, int offset = 0, int length = 0, string ContentRange = null, bool PreferAsync = false, int Timeout = 20 * 1000)
+        public static HttpWebRequest GenerateRequest(string URL, string Method, string token, bool KeepAlive = false, string ContentType = null, byte[] data = null, int offset = 0, int length = 0, string ContentRange = null, bool PreferAsync = false, int Timeout = 20 * 1000, string host = null)
         {
             Uri httpUrl = new Uri(URL);
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(httpUrl);
@@ -72,6 +72,7 @@ namespace CCUtil
             req.ReadWriteTimeout = Timeout;
             req.Method = Method;
             if (token != null) req.Headers.Add("Authorization", "Bearer " + token);
+            if (host != null) req.Host = host;
             req.KeepAlive = KeepAlive;
             if (ContentType != null) req.ContentType = ContentType;
             if (ContentRange != null) req.Headers.Add("Content-Range", ContentRange);
@@ -94,10 +95,10 @@ namespace CCUtil
             return GetResponse(req, GetLocation, false, NeedResponse);
         }
 
-        public static string HttpPost(string URL, string token, byte[] data, int offset=0, int length = -1, bool NeedResponse = true, int Timeout = 20 * 1000)
+        public static string HttpPost(string URL, string token, byte[] data, int offset=0, int length = -1, bool NeedResponse = true, int Timeout = 20 * 1000, string host = null)
         {
             if (length == -1) length = data.Length;
-            HttpWebRequest req = GenerateRequest(URL, "POST", token, false, "application/octet-stream", data, 0, data.Length, null, false, Timeout);
+            HttpWebRequest req = GenerateRequest(URL, "POST", token, false, "application/octet-stream", data, 0, data.Length, null, false, Timeout, host);
             return GetResponse(req, false, false, NeedResponse);
         }
 
@@ -108,10 +109,10 @@ namespace CCUtil
             return GetResponse(req, GetLocation, false, NeedResponse);
         }
 
-        public static string HttpPut(string URL, string token, byte[] data, int offset = 0, int length = -1, string ContentRange = null, bool AllowAutoRedirect = true, bool GetRange = false, bool NeedResponse = true, int Timeout = 20 * 1000)
+        public static string HttpPut(string URL, string token, byte[] data, int offset = 0, int length = -1, string ContentRange = null, bool AllowAutoRedirect = true, bool GetRange = false, bool NeedResponse = true, int Timeout = 20 * 1000, string host = null)
         {
             if (length < 0) length = data.Length;
-            HttpWebRequest req = GenerateRequest(URL, "PUT", token, true, "application/octet-stream", data, offset, length, ContentRange, false, Timeout);
+            HttpWebRequest req = GenerateRequest(URL, "PUT", token, true, "application/octet-stream", data, offset, length, ContentRange, false, Timeout, host);
             if (AllowAutoRedirect == false) req.AllowAutoRedirect = false;
             return GetResponse(req, false, GetRange, NeedResponse);
         }
