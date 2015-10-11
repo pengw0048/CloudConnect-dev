@@ -50,6 +50,27 @@ namespace ConnectionTest
 
         };
 
+        [DataContract]
+        class g_FileResource
+        {
+
+            [DataMember]
+            public string id;
+
+            [DataMember]
+            public string title;
+
+            [DataMember]
+            public string mimeType;
+
+            [DataMember]
+            public string downloadUrl;
+
+            [DataMember]
+            public long fileSize;
+
+        };
+
         static string g_GetToken(string refresh_token)
         {
             string respHTML = Util.HttpPost("https://www.googleapis.com/oauth2/v3/token", "client_id=" + g_client_id + "&client_secret=" + g_client_secret + "&refresh_token=" + refresh_token + "&grant_type=refresh_token");
@@ -78,17 +99,28 @@ namespace ConnectionTest
             }
         }
 
+        static string g_SimpleUpload(string token, byte[] data, int offset, int length)
+        {
+            string respHTML = Util.HttpPost("https://www.googleapis.com/upload/drive/v2/files?uploadType=media", token, data, offset, length);
+            DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(g_FileResource));
+            g_FileResource file = (g_FileResource)ser.ReadObject(new MemoryStream(Encoding.ASCII.GetBytes(respHTML)));
+            return file.id;
+        }
+
         static void Main(string[] args)
         {
             SSLUtil.OverrideValidation();
+            System.Net.ServicePointManager.DefaultConnectionLimit = 20000;
             StreamWriter sw = null;
             Stopwatch watch = new Stopwatch();
             List<string> ips = null;
             byte[] data = new byte[10 * 1024 * 1024];
+            Random rand = new Random();
+            for (int i = 0; i < data.Length; i++) data[i] = (byte)rand.Next(97, 97 + 25);
             
-            sw = new StreamWriter("log/dropbox" + DateTime.Now.ToString("yyyyMMddHHmmssffff") + ".txt");
+            /*sw = new StreamWriter("log/dropbox" + DateTime.Now.ToString("yyyyMMddHHmmssffff") + ".txt");
             sw.WriteLine("---START " + DateTime.Now.ToString() + "---");
-            /*Console.WriteLine("Ping Dropbox");
+            Console.WriteLine("Ping Dropbox");
             ping("content.dropboxapi.com", sw, true);
             
             Console.WriteLine("Upload 10M Dropbox");
@@ -126,8 +158,8 @@ namespace ConnectionTest
                     sw.WriteLine(ip + " -1");
                     Console.WriteLine(ip + " -1");
                 }
-            }*/
-            ips = Util.ReadLines("ip--content.dropboxapi.com.txt");
+            }
+            //ips = Util.ReadLines("ip--content.dropboxapi.com.txt");
             Console.WriteLine("Download 10M Dropbox");
             sw.WriteLine("--DOWNLOAD10M " + DateTime.Now.ToString() + "---");
             foreach (string ip in ips)
@@ -168,15 +200,13 @@ namespace ConnectionTest
             }
 
             sw.WriteLine("---END " + DateTime.Now.ToString() + "---");
-            sw.Close();
+            sw.Close();*/
 
-    
-            /*
             sw = new StreamWriter("log/googledrive" + DateTime.Now.ToString("yyyyMMddHHmmssffff") + ".txt");
             sw.WriteLine("---START " + DateTime.Now.ToString() + "---");
             string g_token = g_GetToken(g_refresh_token);
-            Console.WriteLine("Ping GoogleDrive");
-            //ping("www.googleapis.com", sw);
+            /*Console.WriteLine("Ping GoogleDrive");
+            ping("www.googleapis.com", sw);
 
             Console.WriteLine("Upload 10M GoogleDrive");
             sw.WriteLine("--UPLOAD10M " + DateTime.Now.ToString() + "---");
@@ -216,13 +246,58 @@ namespace ConnectionTest
                     sw.WriteLine(ip + " -1");
                     Console.WriteLine(ip + " -1");
                 }
+            }*/
+
+            ips = Util.ReadLines("ip--www.googleapis.com.txt");
+            string id1 = g_SimpleUpload(g_token, data, 0, 10 * 1024 * 1024);
+            string id2 = g_SimpleUpload(g_token, data, 0, 1 * 1024);
+            Console.WriteLine("Download 10M GoogleDrive");
+            sw.WriteLine("--DOWNLOAD10M " + DateTime.Now.ToString() + "---");
+            foreach (string ip in ips)
+            {
+                try
+                {
+                    watch.Restart();
+                    Util.HttpGet("https://" + ip + "/drive/v2/files/" + id1 + "?alt=media", g_token, false, false, true, 6 * 1000, "www.googleapis.com");
+                    watch.Stop();
+                    sw.WriteLine(ip + " " + watch.ElapsedMilliseconds);
+                    Console.WriteLine(ip + " " + watch.ElapsedMilliseconds);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                    sw.WriteLine(ip + " -1");
+                    Console.WriteLine(ip + " -1");
+                }
+            }
+            Console.WriteLine("Download 1K GoogleDrive");
+            sw.WriteLine("--DOWNLOAD1K " + DateTime.Now.ToString() + "---");
+            foreach (string ip in ips)
+            {
+                try
+                {
+                    watch.Restart();
+                    Util.HttpGet("https://" + ip + "/drive/v2/files/" + id2 + "?alt=media", g_token, false, false, true, 3 * 1000, "www.googleapis.com");
+                    watch.Stop();
+                    sw.WriteLine(ip + " " + watch.ElapsedMilliseconds);
+                    Console.WriteLine(ip + " " + watch.ElapsedMilliseconds);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                    sw.WriteLine(ip + " -1");
+                    Console.WriteLine(ip + " -1");
+                }
             }
 
             sw.WriteLine("---END " + DateTime.Now.ToString() + "---");
             sw.Close();
 
 
-            sw = new StreamWriter("log/onedrive" + DateTime.Now.ToString("yyyyMMddHHmmssffff") + ".txt");
+
+
+
+            /*sw = new StreamWriter("log/onedrive" + DateTime.Now.ToString("yyyyMMddHHmmssffff") + ".txt");
             sw.WriteLine("---START " + DateTime.Now.ToString() + "---");
             string o_token = o_GetToken(o_refresh_token);
             Console.WriteLine("Ping OneDrive");

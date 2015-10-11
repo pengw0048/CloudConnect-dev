@@ -26,13 +26,16 @@ namespace CCUtil
             }
             if (GetLocation)
             {
-                Console.WriteLine("Location: " + res.Headers["Location"]);
-                return res.Headers["Location"];
+                string ts = res.Headers["Location"];
+                res.Close();
+                Console.WriteLine("Location: " + ts);
+                return ts;
             }
             if (GetRange && res.ContentLength == 0)
             {
-                Console.WriteLine("Range: " + res.Headers["Range"]);
-                return res.Headers["Range"];
+                string ts = res.Headers["Range"];
+                Console.WriteLine("Range: " + ts);
+                return ts;
             }
             if (NeedResponse)
             {
@@ -44,6 +47,7 @@ namespace CCUtil
             }
             else
             {
+                res.Close();
                 return "";
             }
         }
@@ -102,9 +106,9 @@ namespace CCUtil
             return GetResponse(ref req, false, false, NeedResponse);
         }
 
-        public static string HttpGet(string URL, string token, bool GetLocation = false, bool AllowAutoRedirect = true, bool NeedResponse = true, int Timeout = 20 * 1000)
+        public static string HttpGet(string URL, string token, bool GetLocation = false, bool AllowAutoRedirect = true, bool NeedResponse = true, int Timeout = 20 * 1000, string host = null)
         {
-            HttpWebRequest req = GenerateRequest(URL, "GET", token, false, null, null, 0, 0, null, false, Timeout);
+            HttpWebRequest req = GenerateRequest(URL, "GET", token, false, null, null, 0, 0, null, false, Timeout, host);
             if (AllowAutoRedirect == false) req.AllowAutoRedirect = false;
             return GetResponse(ref req, GetLocation, false, NeedResponse);
         }
