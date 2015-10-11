@@ -103,7 +103,7 @@ namespace ConnectionTest_o
                 try
                 {
                     watch.Restart();
-                    Util.HttpPut("https://" + ip + "/v1.0/drive/root:/10M:/content", o_token, data, 0, 1 * 1024, null, false, false, false, 3 * 1000, "api.onedrive.com");
+                    Util.HttpPut("https://" + ip + "/v1.0/drive/root:/1K:/content", o_token, data, 0, 1 * 1024, null, false, false, false, 3 * 1000, "api.onedrive.com");
                     watch.Stop();
                     sw.WriteLine(ip + " " + watch.ElapsedMilliseconds);
                     Console.WriteLine(ip + " " + watch.ElapsedMilliseconds);
