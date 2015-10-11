@@ -115,7 +115,7 @@ namespace ConnectionTest_o
                     Console.WriteLine(ip + " -1");
                 }
             }
-
+            
 
             List<string>[] ipss = new List<string>[5];
             for (int i = 1; i <= 4; i++) ipss[i] = Util.ReadLines("ip--public.bn130" + i + ".livefilestore.com.txt");
