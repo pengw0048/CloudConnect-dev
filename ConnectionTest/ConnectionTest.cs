@@ -85,10 +85,10 @@ namespace ConnectionTest
             Stopwatch watch = new Stopwatch();
             List<string> ips = null;
             byte[] data = new byte[10 * 1024 * 1024];
-            /*
+            
             sw = new StreamWriter("log/dropbox" + DateTime.Now.ToString("yyyyMMddHHmmssffff") + ".txt");
             sw.WriteLine("---START " + DateTime.Now.ToString() + "---");
-            Console.WriteLine("Ping Dropbox");
+            /*Console.WriteLine("Ping Dropbox");
             ping("content.dropboxapi.com", sw, true);
             
             Console.WriteLine("Upload 10M Dropbox");
@@ -126,13 +126,52 @@ namespace ConnectionTest
                     sw.WriteLine(ip + " -1");
                     Console.WriteLine(ip + " -1");
                 }
+            }*/
+            ips = Util.ReadLines("ip--content.dropboxapi.com.txt");
+            Console.WriteLine("Download 10M Dropbox");
+            sw.WriteLine("--DOWNLOAD10M " + DateTime.Now.ToString() + "---");
+            foreach (string ip in ips)
+            {
+                try
+                {
+                    watch.Restart();
+                    Util.HttpGet("https://" + ip + "/1/files/auto/10M", d_token, false, true, true, 5 * 1000);
+                    watch.Stop();
+                    sw.WriteLine(ip + " " + watch.ElapsedMilliseconds);
+                    Console.WriteLine(ip + " " + watch.ElapsedMilliseconds);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                    sw.WriteLine(ip + " -1");
+                    Console.WriteLine(ip + " -1");
+                }
             }
-            
+            Console.WriteLine("Download 1K Dropbox");
+            sw.WriteLine("--DOWNLOAD1K " + DateTime.Now.ToString() + "---");
+            foreach (string ip in ips)
+            {
+                try
+                {
+                    watch.Restart();
+                    Util.HttpGet("https://" + ip + "/1/files/auto/1K", d_token, false, true, true, 3 * 1000);
+                    watch.Stop();
+                    sw.WriteLine(ip + " " + watch.ElapsedMilliseconds);
+                    Console.WriteLine(ip + " " + watch.ElapsedMilliseconds);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                    sw.WriteLine(ip + " -1");
+                    Console.WriteLine(ip + " -1");
+                }
+            }
+
             sw.WriteLine("---END " + DateTime.Now.ToString() + "---");
             sw.Close();
 
     
-
+            /*
             sw = new StreamWriter("log/googledrive" + DateTime.Now.ToString("yyyyMMddHHmmssffff") + ".txt");
             sw.WriteLine("---START " + DateTime.Now.ToString() + "---");
             string g_token = g_GetToken(g_refresh_token);
@@ -181,7 +220,6 @@ namespace ConnectionTest
 
             sw.WriteLine("---END " + DateTime.Now.ToString() + "---");
             sw.Close();
-            */
 
 
             sw = new StreamWriter("log/onedrive" + DateTime.Now.ToString("yyyyMMddHHmmssffff") + ".txt");
@@ -193,7 +231,7 @@ namespace ConnectionTest
             Console.WriteLine("Upload 10M OneDrive");
             sw.WriteLine("--UPLOAD10M " + DateTime.Now.ToString() + "---");
             ips = Util.ReadLines("ip--api.onedrive.com.txt");
-            /*foreach (string ip in ips)
+            foreach (string ip in ips)
             {
                 try
                 {
@@ -209,7 +247,7 @@ namespace ConnectionTest
                     sw.WriteLine(ip + " -1");
                     Console.WriteLine(ip + " -1");
                 }
-            }*/
+            }
             Console.WriteLine("Upload 1K OneDrive");
             sw.WriteLine("--UPLOAD1K " + DateTime.Now.ToString() + "---");
             foreach (string ip in ips)
@@ -231,7 +269,7 @@ namespace ConnectionTest
             }
 
             sw.WriteLine("---END " + DateTime.Now.ToString() + "---");
-            sw.Close();
+            sw.Close();*/
 
             SSLUtil.RestoreValidation();
         }

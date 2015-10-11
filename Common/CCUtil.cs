@@ -10,7 +10,7 @@ namespace CCUtil
 {
     public class CCUtil
     {
-        public static string GetResponse(HttpWebRequest req, bool GetLocation = false, bool GetRange = false, bool NeedResponse = true)
+        public static string GetResponse(ref HttpWebRequest req, bool GetLocation = false, bool GetRange = false, bool NeedResponse = true)
         {
             HttpWebResponse res = null;
             try
@@ -39,7 +39,7 @@ namespace CCUtil
                 StreamReader reader = new StreamReader(res.GetResponseStream(), Encoding.GetEncoding("utf-8"));
                 string respHTML = reader.ReadToEnd();
                 res.Close();
-                Console.WriteLine(respHTML);
+                //Console.WriteLine(respHTML);
                 return respHTML;
             }
             else
@@ -92,21 +92,21 @@ namespace CCUtil
             byte[] data = Encoding.ASCII.GetBytes(post);
             HttpWebRequest req = GenerateRequest(URL, "POST", token, false, isJson ? "application/json" : "application/x-www-form-urlencoded", data, 0, data.Length, null, PreferAsync, Timeout);
             if (AllowAutoRedirect == false) req.AllowAutoRedirect = false;
-            return GetResponse(req, GetLocation, false, NeedResponse);
+            return GetResponse(ref req, GetLocation, false, NeedResponse);
         }
 
         public static string HttpPost(string URL, string token, byte[] data, int offset=0, int length = -1, bool NeedResponse = true, int Timeout = 20 * 1000, string host = null)
         {
             if (length == -1) length = data.Length;
             HttpWebRequest req = GenerateRequest(URL, "POST", token, false, "application/octet-stream", data, 0, data.Length, null, false, Timeout, host);
-            return GetResponse(req, false, false, NeedResponse);
+            return GetResponse(ref req, false, false, NeedResponse);
         }
 
         public static string HttpGet(string URL, string token, bool GetLocation = false, bool AllowAutoRedirect = true, bool NeedResponse = true, int Timeout = 20 * 1000)
         {
             HttpWebRequest req = GenerateRequest(URL, "GET", token, false, null, null, 0, 0, null, false, Timeout);
             if (AllowAutoRedirect == false) req.AllowAutoRedirect = false;
-            return GetResponse(req, GetLocation, false, NeedResponse);
+            return GetResponse(ref req, GetLocation, false, NeedResponse);
         }
 
         public static string HttpPut(string URL, string token, byte[] data, int offset = 0, int length = -1, string ContentRange = null, bool AllowAutoRedirect = true, bool GetRange = false, bool NeedResponse = true, int Timeout = 20 * 1000, string host = null)
@@ -114,13 +114,13 @@ namespace CCUtil
             if (length < 0) length = data.Length;
             HttpWebRequest req = GenerateRequest(URL, "PUT", token, true, "application/octet-stream", data, offset, length, ContentRange, false, Timeout, host);
             if (AllowAutoRedirect == false) req.AllowAutoRedirect = false;
-            return GetResponse(req, false, GetRange, NeedResponse);
+            return GetResponse(ref req, false, GetRange, NeedResponse);
         }
 
         public static void HttpDelete(string url, string token)
         {
             HttpWebRequest req = GenerateRequest(url, "DELETE", token);
-            GetResponse(req);
+            GetResponse(ref req);
         }
 
         public static List<int> Ping(List<string> ips)
