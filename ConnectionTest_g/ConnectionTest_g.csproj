@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{AFD97BC9-D9C7-4D63-9A46-E78856DBF052}</ProjectGuid>
+    <ProjectGuid>{6963B929-B37C-4018-9756-22F45214117C}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ConnectionTest</RootNamespace>
-    <AssemblyName>ConnectionTest</AssemblyName>
+    <RootNamespace>ConnectionTest_g</RootNamespace>
+    <AssemblyName>ConnectionTest_g</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -44,7 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConnectionTest.cs" />
+    <Compile Include="ConnectionTest_g.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
