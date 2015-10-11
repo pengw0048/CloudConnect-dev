@@ -17,6 +17,11 @@ namespace ConnectionTest
         private static string g_refresh_token = "1/8N6Yf_f-7KH0ms0fNH01zA4DRajTDradB6IxKMLU2RRIgOrJDtdun6zK6XiATCKT";
         private static string g_client_id = "920585866822-d71k4q781qqr4rhc17jkicjdbdcn9b9d.apps.googleusercontent.com";
         private static string g_client_secret = "_9rOg4xXuBQ8vDQblIcv4uZ5";
+        private static string o_clientid = "000000004816FA26";
+        private static string o_secret = "UBVcd-hCr6JYFnldXyY5pn85T2rkUGMW";
+        private static string o_refresh_token = "MCtAD7A4A9Z1zIRBj3Rv6zUGRgPJRkwwWNnThF3J07UxaDhvJncJXD8jHk5Be3sApsShMLUaonNtRbZBUMkh69Gsuf5gdDbir9JYKTEoe1ujGkznVlsNZncsEIhSc3IwMN*qXyoGHlmHwUuSFRjh5mtb3iDXfxOZHuCyAmwax4UqPNKlMvrQLDXrvcpMZuoRsnQt504!X*m7tgssfsbK0SsMduE5KfSpYLolJQ0YRZvmsFIm2dLP1sFPHOJofuIBOHDK3J5Dk6Skw*9w9rrSJx13OS27*PHNJQVrmarvK0jhfLCCNCbpGgHc43zmn2uFZRuGLiMVFVf8KXL*1QEykCxyghNfl3RazcDJQCzK8c!TOmPcBJxph3VhW9pVyGfOtNA$$";
+        private static string o_redirect_uri = "http://stomakun.tk/echo.php";
+
 
         [DataContract]
         class g_TokenResponse
@@ -30,12 +35,35 @@ namespace ConnectionTest
 
         };
 
+        [DataContract]
+        class o_TokenResponse
+        {
+
+            [DataMember]
+            public long expires_in;
+
+            [DataMember]
+            public string access_token;
+
+            [DataMember]
+            public string refresh_token;
+
+        };
+
         static string g_GetToken(string refresh_token)
         {
             string respHTML = Util.HttpPost("https://www.googleapis.com/oauth2/v3/token", "client_id=" + g_client_id + "&client_secret=" + g_client_secret + "&refresh_token=" + refresh_token + "&grant_type=refresh_token");
             DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(g_TokenResponse));
             g_TokenResponse token = (g_TokenResponse)ser.ReadObject(new MemoryStream(Encoding.ASCII.GetBytes(respHTML)));
             return token.access_token;
+        }
+
+        static string o_GetToken(string refresh_token)
+        {
+            string respHTML = Util.HttpPost("https://login.live.com/oauth20_token.srf", "client_id=" + o_clientid + "&redirect_uri=" + Uri.EscapeUriString(o_redirect_uri) + "&client_secret=" + o_secret + "&refresh_token=" + refresh_token + "&grant_type=refresh_token");
+            DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(o_TokenResponse));
+            o_TokenResponse personinfo = (o_TokenResponse)ser.ReadObject(new MemoryStream(Encoding.ASCII.GetBytes(respHTML)));
+            return personinfo.access_token;
         }
 
         static void ping(string domain, StreamWriter sw, bool PingWithHttpGet = false)
@@ -56,7 +84,7 @@ namespace ConnectionTest
             StreamWriter sw = null;
             Stopwatch watch = new Stopwatch();
             List<string> ips = null;
-            byte[] data = new byte[1 * 1024 * 1024];
+            byte[] data = new byte[10 * 1024 * 1024];
             /*
             sw = new StreamWriter("log/dropbox" + DateTime.Now.ToString("yyyyMMddHHmmssffff") + ".txt");
             sw.WriteLine("---START " + DateTime.Now.ToString() + "---");
@@ -103,7 +131,7 @@ namespace ConnectionTest
             sw.WriteLine("---END " + DateTime.Now.ToString() + "---");
             sw.Close();
 
-    */
+    
 
             sw = new StreamWriter("log/googledrive" + DateTime.Now.ToString("yyyyMMddHHmmssffff") + ".txt");
             sw.WriteLine("---START " + DateTime.Now.ToString() + "---");
@@ -119,7 +147,7 @@ namespace ConnectionTest
                 try
                 {
                     watch.Restart();
-                    Util.HttpPost("https://" + ip + "/upload/drive/v2/files?uploadType=media", g_token, data, 0, 10 * 1024 * 1024, false, 10 * 1000, "www.googleapis.com");
+                    Util.HttpPost("https://" + ip + "/upload/drive/v2/files?uploadType=media", g_token, data, 0, 10 * 1024 * 1024, false, 6 * 1000, "www.googleapis.com");
                     watch.Stop();
                     sw.WriteLine(ip + " " + watch.ElapsedMilliseconds);
                     Console.WriteLine(ip + " " + watch.ElapsedMilliseconds);
@@ -139,6 +167,57 @@ namespace ConnectionTest
                 {
                     watch.Restart();
                     Util.HttpPost("https://" + ip + "/upload/drive/v2/files?uploadType=media", g_token, data, 0, 1 * 1024, false, 3 * 1000, "www.googleapis.com");
+                    watch.Stop();
+                    sw.WriteLine(ip + " " + watch.ElapsedMilliseconds);
+                    Console.WriteLine(ip + " " + watch.ElapsedMilliseconds);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                    sw.WriteLine(ip + " -1");
+                    Console.WriteLine(ip + " -1");
+                }
+            }
+
+            sw.WriteLine("---END " + DateTime.Now.ToString() + "---");
+            sw.Close();
+            */
+
+
+            sw = new StreamWriter("log/onedrive" + DateTime.Now.ToString("yyyyMMddHHmmssffff") + ".txt");
+            sw.WriteLine("---START " + DateTime.Now.ToString() + "---");
+            string o_token = o_GetToken(o_refresh_token);
+            Console.WriteLine("Ping OneDrive");
+            //ping("api.onedrive.com", sw, true);
+
+            Console.WriteLine("Upload 10M OneDrive");
+            sw.WriteLine("--UPLOAD10M " + DateTime.Now.ToString() + "---");
+            ips = Util.ReadLines("ip--api.onedrive.com.txt");
+            /*foreach (string ip in ips)
+            {
+                try
+                {
+                    watch.Restart();
+                    Util.HttpPut("https://" + ip + "/v1.0/drive/root:/10M:/content", o_token, data, 0, 10 * 1024 * 1024, null, false, false, false, 8 * 1000, "api.onedrive.com");
+                    watch.Stop();
+                    sw.WriteLine(ip + " " + watch.ElapsedMilliseconds);
+                    Console.WriteLine(ip + " " + watch.ElapsedMilliseconds);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                    sw.WriteLine(ip + " -1");
+                    Console.WriteLine(ip + " -1");
+                }
+            }*/
+            Console.WriteLine("Upload 1K OneDrive");
+            sw.WriteLine("--UPLOAD1K " + DateTime.Now.ToString() + "---");
+            foreach (string ip in ips)
+            {
+                try
+                {
+                    watch.Restart();
+                    Util.HttpPut("https://" + ip + "/v1.0/drive/root:/10M:/content", o_token, data, 0, 1 * 1024, null, false, false, false, 3 * 1000, "api.onedrive.com");
                     watch.Stop();
                     sw.WriteLine(ip + " " + watch.ElapsedMilliseconds);
                     Console.WriteLine(ip + " " + watch.ElapsedMilliseconds);
