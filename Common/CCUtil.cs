@@ -190,7 +190,7 @@ namespace CCUtil
             return RTTs;
         }
 
-        public static List<string> ReadLines(string file, int minlength = 0)
+        public static List<string> ReadLines(string file, int minlength = 4)
         {
             List<string> lines = new List<string>();
             StreamReader sr = new StreamReader(file);
