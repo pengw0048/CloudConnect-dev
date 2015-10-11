@@ -123,7 +123,7 @@ namespace ConnectionTest
             Random rand = new Random();
             for (int i = 0; i < data.Length; i++) data[i] = (byte)rand.Next(97, 97 + 25);
             
-            /*sw = new StreamWriter("log/dropbox" + DateTime.Now.ToString("yyyyMMddHHmmssffff") + ".txt");
+            sw = new StreamWriter("log/dropbox" + DateTime.Now.ToString("yyyyMMddHHmmssffff") + ".txt");
             sw.WriteLine("---START " + DateTime.Now.ToString() + "---");
             ips = Util.ReadLines("ip--content.dropboxapi.com.txt");
             Console.WriteLine("Ping Dropbox");
@@ -164,7 +164,6 @@ namespace ConnectionTest
                     Console.WriteLine(ip + " -1");
                 }
             }
-            //ips = Util.ReadLines("ip--content.dropboxapi.com.txt");
             Console.WriteLine("Download 10M Dropbox");
             sw.WriteLine("--DOWNLOAD10M " + DateTime.Now.ToString() + "---");
             foreach (string ip in ips)
@@ -205,9 +204,9 @@ namespace ConnectionTest
             }
 
             sw.WriteLine("---END " + DateTime.Now.ToString() + "---");
-            sw.Close();*/
+            sw.Close();
 
-            /*sw = new StreamWriter("log/googledrive" + DateTime.Now.ToString("yyyyMMddHHmmssffff") + ".txt");
+            sw = new StreamWriter("log/googledrive" + DateTime.Now.ToString("yyyyMMddHHmmssffff") + ".txt");
             sw.WriteLine("---START " + DateTime.Now.ToString() + "---");
             ips = Util.ReadLines("ip--www.googleapis.com.txt");
             string g_token = g_GetToken(g_refresh_token);
@@ -296,17 +295,16 @@ namespace ConnectionTest
 
             sw.WriteLine("---END " + DateTime.Now.ToString() + "---");
             sw.Close();
-            */
-
+            
 
 
 
             sw = new StreamWriter("log/onedrive" + DateTime.Now.ToString("yyyyMMddHHmmssffff") + ".txt");
             sw.WriteLine("---START " + DateTime.Now.ToString() + "---");
             ips = Util.ReadLines("ip--api.onedrive.com.txt");
-            string o_token = o_GetToken(o_refresh_token);/*
+            string o_token = o_GetToken(o_refresh_token);
             Console.WriteLine("Ping OneDrive");
-            //ping("api.onedrive.com", sw, true);
+            ping("api.onedrive.com", sw, true);
 
             Console.WriteLine("Upload 10M OneDrive");
             sw.WriteLine("--UPLOAD10M " + DateTime.Now.ToString() + "---");
@@ -345,7 +343,7 @@ namespace ConnectionTest
                     sw.WriteLine(ip + " -1");
                     Console.WriteLine(ip + " -1");
                 }
-            }*/
+            }
 
 
             List<string>[] ipss = new List<string>[5];
