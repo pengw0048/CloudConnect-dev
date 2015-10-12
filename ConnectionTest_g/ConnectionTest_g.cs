@@ -37,18 +37,6 @@ namespace ConnectionTest_g
             [DataMember]
             public string id;
 
-            [DataMember]
-            public string title;
-
-            [DataMember]
-            public string mimeType;
-
-            [DataMember]
-            public string downloadUrl;
-
-            [DataMember]
-            public long fileSize;
-
         };
 
         static string g_GetToken(string refresh_token)
@@ -104,10 +92,13 @@ namespace ConnectionTest_g
                 try
                 {
                     watch.Restart();
-                    Util.HttpPost("https://" + ip + "/upload/drive/v2/files?uploadType=media", g_token, data, 0, 10 * 1024 * 1024, false, 5 * 1000, "www.googleapis.com");
+                    string respHTML = Util.HttpPost("https://" + ip + "/upload/drive/v2/files?uploadType=media", g_token, data, 0, 10 * 1024 * 1024, true, 5 * 1000, "www.googleapis.com");
                     watch.Stop();
                     sw.WriteLine(ip + " " + watch.ElapsedMilliseconds);
                     Console.WriteLine(ip + " " + watch.ElapsedMilliseconds);
+                    DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(g_FileResource));
+                    g_FileResource file = (g_FileResource)ser.ReadObject(new MemoryStream(Encoding.ASCII.GetBytes(respHTML)));
+                    Util.HttpDelete("https://www.googleapis.com/drive/v2/files/" + file.id, g_token);
                 }
                 catch (Exception ex)
                 {
@@ -176,6 +167,8 @@ namespace ConnectionTest_g
                     Console.WriteLine(ip + " -1");
                 }
             }
+            Util.HttpDelete("https://www.googleapis.com/drive/v2/files/" + id1, g_token);
+            Util.HttpDelete("https://www.googleapis.com/drive/v2/files/" + id2, g_token);
 
             sw.WriteLine("---END " + DateTime.Now.ToString() + "---");
             sw.Close();
