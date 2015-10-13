@@ -51,11 +51,13 @@ namespace ConnectionTest_g
         {
             List<string> ips = Util.ReadLines("ip--" + domain + ".txt", 2);
             sw.WriteLine("---PING " + domain + " " + DateTime.Now.ToString() + "---");
+            sw.Flush();
             List<int> rtts = PingWithHttpGet ? Util.PingWithHttpGet(ips) : Util.Ping(ips);
             int i = 0;
             foreach (string ip in ips)
             {
                 sw.WriteLine(ip + " " + rtts[i++]);
+                sw.Flush();
             }
         }
 
@@ -80,6 +82,7 @@ namespace ConnectionTest_g
             
             sw = new StreamWriter("log/googledrive" + DateTime.Now.ToString("yyyyMMddHHmmssffff") + ".txt");
             sw.WriteLine("---START " + DateTime.Now.ToString() + "---");
+            sw.Flush();
             ips = Util.ReadLines("ip--www.googleapis.com.txt");
             string g_token = g_GetToken(g_refresh_token);
             Console.WriteLine("Ping GoogleDrive");
@@ -87,6 +90,7 @@ namespace ConnectionTest_g
             
             Console.WriteLine("Upload 10M GoogleDrive");
             sw.WriteLine("--UPLOAD10M " + DateTime.Now.ToString() + "---");
+            sw.Flush();
             foreach (string ip in ips)
             {
                 try
@@ -95,6 +99,7 @@ namespace ConnectionTest_g
                     string respHTML = Util.HttpPost("https://" + ip + "/upload/drive/v2/files?uploadType=media", g_token, data, 0, 10 * 1024 * 1024, true, 5 * 1000, "www.googleapis.com");
                     watch.Stop();
                     sw.WriteLine(ip + " " + watch.ElapsedMilliseconds);
+                    sw.Flush();
                     Console.WriteLine(ip + " " + watch.ElapsedMilliseconds);
                     DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(g_FileResource));
                     g_FileResource file = (g_FileResource)ser.ReadObject(new MemoryStream(Encoding.ASCII.GetBytes(respHTML)));
@@ -104,11 +109,13 @@ namespace ConnectionTest_g
                 {
                     Console.WriteLine(ex);
                     sw.WriteLine(ip + " -1");
+                    sw.Flush();
                     Console.WriteLine(ip + " -1");
                 }
             }
             Console.WriteLine("Upload 1K GoogleDrive");
             sw.WriteLine("--UPLOAD1K " + DateTime.Now.ToString() + "---");
+            sw.Flush();
             foreach (string ip in ips)
             {
                 try
@@ -117,6 +124,7 @@ namespace ConnectionTest_g
                     string respHTML = Util.HttpPost("https://" + ip + "/upload/drive/v2/files?uploadType=media", g_token, data, 0, 1 * 1024, true, 3 * 1000, "www.googleapis.com");
                     watch.Stop();
                     sw.WriteLine(ip + " " + watch.ElapsedMilliseconds);
+                    sw.Flush();
                     Console.WriteLine(ip + " " + watch.ElapsedMilliseconds);
                     DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(g_FileResource));
                     g_FileResource file = (g_FileResource)ser.ReadObject(new MemoryStream(Encoding.ASCII.GetBytes(respHTML)));
@@ -126,6 +134,7 @@ namespace ConnectionTest_g
                 {
                     Console.WriteLine(ex);
                     sw.WriteLine(ip + " -1");
+                    sw.Flush();
                     Console.WriteLine(ip + " -1");
                 }
             }
@@ -134,6 +143,7 @@ namespace ConnectionTest_g
             string id2 = g_SimpleUpload(g_token, data, 0, 1 * 1024);
             Console.WriteLine("Download 10M GoogleDrive");
             sw.WriteLine("--DOWNLOAD10M " + DateTime.Now.ToString() + "---");
+            sw.Flush();
             foreach (string ip in ips)
             {
                 try
@@ -142,17 +152,20 @@ namespace ConnectionTest_g
                     Util.HttpGet("https://" + ip + "/drive/v2/files/" + id1 + "?alt=media", g_token, false, false, true, 5 * 1000, "www.googleapis.com");
                     watch.Stop();
                     sw.WriteLine(ip + " " + watch.ElapsedMilliseconds);
+                    sw.Flush();
                     Console.WriteLine(ip + " " + watch.ElapsedMilliseconds);
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex);
                     sw.WriteLine(ip + " -1");
+                    sw.Flush();
                     Console.WriteLine(ip + " -1");
                 }
             }
             Console.WriteLine("Download 1K GoogleDrive");
             sw.WriteLine("--DOWNLOAD1K " + DateTime.Now.ToString() + "---");
+            sw.Flush();
             foreach (string ip in ips)
             {
                 try
@@ -161,12 +174,14 @@ namespace ConnectionTest_g
                     Util.HttpGet("https://" + ip + "/drive/v2/files/" + id2 + "?alt=media", g_token, false, false, true, 3 * 1000, "www.googleapis.com");
                     watch.Stop();
                     sw.WriteLine(ip + " " + watch.ElapsedMilliseconds);
+                    sw.Flush();
                     Console.WriteLine(ip + " " + watch.ElapsedMilliseconds);
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex);
                     sw.WriteLine(ip + " -1");
+                    sw.Flush();
                     Console.WriteLine(ip + " -1");
                 }
             }
@@ -174,6 +189,7 @@ namespace ConnectionTest_g
             Util.HttpDelete("https://www.googleapis.com/drive/v2/files/" + id2, g_token);
 
             sw.WriteLine("---END " + DateTime.Now.ToString() + "---");
+            sw.Flush();
             sw.Close();
             SSLUtil.RestoreValidation();
         }

@@ -51,11 +51,13 @@ namespace ConnectionTest_o
         {
             List<string> ips = Util.ReadLines("ip--" + domain + ".txt", 2);
             sw.WriteLine("---PING " + domain + " " + DateTime.Now.ToString() + "---");
+            sw.Flush();
             List<int> rtts = PingWithHttpGet ? Util.PingWithHttpGet(ips) : Util.Ping(ips);
             int i = 0;
             foreach (string ip in ips)
             {
                 sw.WriteLine(ip + " " + rtts[i++]);
+                sw.Flush();
             }
         }
         
@@ -72,6 +74,7 @@ namespace ConnectionTest_o
             
             sw = new StreamWriter("log/onedrive" + DateTime.Now.ToString("yyyyMMddHHmmssffff") + ".txt");
             sw.WriteLine("---START " + DateTime.Now.ToString() + "---");
+            sw.Flush();
             ips = Util.ReadLines("ip--api.onedrive.com.txt");
             string o_token = o_GetToken(o_refresh_token);
             Console.WriteLine("Ping OneDrive");
@@ -79,6 +82,7 @@ namespace ConnectionTest_o
 
             Console.WriteLine("Upload 10M OneDrive");
             sw.WriteLine("--UPLOAD10M " + DateTime.Now.ToString() + "---");
+            sw.Flush();
             foreach (string ip in ips)
             {
                 try
@@ -87,17 +91,20 @@ namespace ConnectionTest_o
                     Util.HttpPut("https://" + ip + "/v1.0/drive/root:/10M:/content", o_token, data, 0, 10 * 1024 * 1024, null, false, false, false, 10 * 1000, "api.onedrive.com");
                     watch.Stop();
                     sw.WriteLine(ip + " " + watch.ElapsedMilliseconds);
+                    sw.Flush();
                     Console.WriteLine(ip + " " + watch.ElapsedMilliseconds);
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex);
                     sw.WriteLine(ip + " -1");
+                    sw.Flush();
                     Console.WriteLine(ip + " -1");
                 }
             }
             Console.WriteLine("Upload 1K OneDrive");
             sw.WriteLine("--UPLOAD1K " + DateTime.Now.ToString() + "---");
+            sw.Flush();
             foreach (string ip in ips)
             {
                 try
@@ -106,12 +113,14 @@ namespace ConnectionTest_o
                     Util.HttpPut("https://" + ip + "/v1.0/drive/root:/1K:/content", o_token, data, 0, 1 * 1024, null, false, false, false, 3 * 1000, "api.onedrive.com");
                     watch.Stop();
                     sw.WriteLine(ip + " " + watch.ElapsedMilliseconds);
+                    sw.Flush();
                     Console.WriteLine(ip + " " + watch.ElapsedMilliseconds);
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex);
                     sw.WriteLine(ip + " -1");
+                    sw.Flush();
                     Console.WriteLine(ip + " -1");
                 }
             }
@@ -121,6 +130,7 @@ namespace ConnectionTest_o
             for (int i = 1; i <= 4; i++) ipss[i] = Util.ReadLines("ip--public.bn130" + i + ".livefilestore.com.txt");
             Console.WriteLine("Download 10M OneDrive");
             sw.WriteLine("--DOWNLOAD10M " + DateTime.Now.ToString() + "---");
+            sw.Flush();
             string file1 = o_GetDownloadLink(o_token, "10M").Split(new string[] { ".com" }, StringSplitOptions.None)[1];
             for (int i = 1; i <= 4; i++)
             {
@@ -132,18 +142,21 @@ namespace ConnectionTest_o
                         Util.HttpGet("https://" + ip + file1, o_token, false, false, true, 8 * 1000, "public.bn130" + i + ".livefilestore.com");
                         watch.Stop();
                         sw.WriteLine(ip + " " + watch.ElapsedMilliseconds);
+                        sw.Flush();
                         Console.WriteLine(ip + " " + watch.ElapsedMilliseconds);
                     }
                     catch (Exception ex)
                     {
                         Console.WriteLine(ex);
                         sw.WriteLine(ip + " -1");
+                        sw.Flush();
                         Console.WriteLine(ip + " -1");
                     }
                 }
             }
             Console.WriteLine("Download 1K OneDrive");
             sw.WriteLine("--DOWNLOAD1K " + DateTime.Now.ToString() + "---");
+            sw.Flush();
             string file2 = o_GetDownloadLink(o_token, "1K").Split(new string[] { ".com" }, StringSplitOptions.None)[1];
             for (int i = 1; i <= 4; i++)
             {
@@ -155,18 +168,21 @@ namespace ConnectionTest_o
                         Util.HttpGet("https://" + ip + file2, o_token, false, false, true, 3 * 1000, "public.bn130" + i + ".livefilestore.com");
                         watch.Stop();
                         sw.WriteLine(ip + " " + watch.ElapsedMilliseconds);
+                        sw.Flush();
                         Console.WriteLine(ip + " " + watch.ElapsedMilliseconds);
                     }
                     catch (Exception ex)
                     {
                         Console.WriteLine(ex);
                         sw.WriteLine(ip + " -1");
+                        sw.Flush();
                         Console.WriteLine(ip + " -1");
                     }
                 }
             }
 
             sw.WriteLine("---END " + DateTime.Now.ToString() + "---");
+            sw.Flush();
             sw.Close();
 
             SSLUtil.RestoreValidation();

@@ -19,11 +19,13 @@ namespace ConnectionTest_d
         {
             List<string> ips = Util.ReadLines("ip--" + domain + ".txt", 2);
             sw.WriteLine("---PING " + domain + " " + DateTime.Now.ToString() + "---");
+            sw.Flush();
             List<int> rtts = PingWithHttpGet ? Util.PingWithHttpGet(ips) : Util.Ping(ips);
             int i = 0;
             foreach (string ip in ips)
             {
                 sw.WriteLine(ip + " " + rtts[i++]);
+                sw.Flush();
             }
         }
 
@@ -40,12 +42,14 @@ namespace ConnectionTest_d
             
             sw = new StreamWriter("log/dropbox" + DateTime.Now.ToString("yyyyMMddHHmmssffff") + ".txt");
             sw.WriteLine("---START " + DateTime.Now.ToString() + "---");
+            sw.Flush();
             ips = Util.ReadLines("ip--content.dropboxapi.com.txt");
             Console.WriteLine("Ping Dropbox");
             ping("content.dropboxapi.com", sw, true);
             
             Console.WriteLine("Upload 10M Dropbox");
             sw.WriteLine("--UPLOAD10M " + DateTime.Now.ToString() + "---");
+            sw.Flush();
             foreach (string ip in ips)
             {
                 try {
@@ -53,16 +57,19 @@ namespace ConnectionTest_d
                     Util.HttpPut("https://" + ip + "/1/files_put/auto/10M", d_token, data, 0, 10 * 1024 * 1024, null, true, false, false, 5 * 1000);
                     watch.Stop();
                     sw.WriteLine(ip + " " + watch.ElapsedMilliseconds);
+                    sw.Flush();
                     Console.WriteLine(ip + " " + watch.ElapsedMilliseconds);
                 }
                 catch (Exception)
                 {
                     sw.WriteLine(ip + " -1");
+                    sw.Flush();
                     Console.WriteLine(ip + " -1");
                 }
             }
             Console.WriteLine("Upload 1K Dropbox");
             sw.WriteLine("--UPLOAD1K " + DateTime.Now.ToString() + "---");
+            sw.Flush();
             foreach (string ip in ips)
             {
                 try
@@ -71,16 +78,19 @@ namespace ConnectionTest_d
                     Util.HttpPut("https://" + ip + "/1/files_put/auto/1K", d_token, data, 0, 1 * 1024, null, true, false, false, 3 * 1000);
                     watch.Stop();
                     sw.WriteLine(ip + " " + watch.ElapsedMilliseconds);
+                    sw.Flush();
                     Console.WriteLine(ip + " " + watch.ElapsedMilliseconds);
                 }
                 catch (Exception)
                 {
                     sw.WriteLine(ip + " -1");
+                    sw.Flush();
                     Console.WriteLine(ip + " -1");
                 }
             }
             Console.WriteLine("Download 10M Dropbox");
             sw.WriteLine("--DOWNLOAD10M " + DateTime.Now.ToString() + "---");
+            sw.Flush();
             foreach (string ip in ips)
             {
                 try
@@ -89,17 +99,20 @@ namespace ConnectionTest_d
                     Util.HttpGet("https://" + ip + "/1/files/auto/10M", d_token, false, true, true, 5 * 1000);
                     watch.Stop();
                     sw.WriteLine(ip + " " + watch.ElapsedMilliseconds);
+                    sw.Flush();
                     Console.WriteLine(ip + " " + watch.ElapsedMilliseconds);
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex);
                     sw.WriteLine(ip + " -1");
+                    sw.Flush();
                     Console.WriteLine(ip + " -1");
                 }
             }
             Console.WriteLine("Download 1K Dropbox");
             sw.WriteLine("--DOWNLOAD1K " + DateTime.Now.ToString() + "---");
+            sw.Flush();
             foreach (string ip in ips)
             {
                 try
@@ -108,17 +121,20 @@ namespace ConnectionTest_d
                     Util.HttpGet("https://" + ip + "/1/files/auto/1K", d_token, false, true, true, 3 * 1000);
                     watch.Stop();
                     sw.WriteLine(ip + " " + watch.ElapsedMilliseconds);
+                    sw.Flush();
                     Console.WriteLine(ip + " " + watch.ElapsedMilliseconds);
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex);
                     sw.WriteLine(ip + " -1");
+                    sw.Flush();
                     Console.WriteLine(ip + " -1");
                 }
             }
 
             sw.WriteLine("---END " + DateTime.Now.ToString() + "---");
+            sw.Flush();
             sw.Close();
             SSLUtil.RestoreValidation();
         }
