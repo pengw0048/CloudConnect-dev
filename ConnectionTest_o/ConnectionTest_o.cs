@@ -84,7 +84,7 @@ namespace ConnectionTest_o
                 try
                 {
                     watch.Restart();
-                    Util.HttpPut("https://" + ip + "/v1.0/drive/root:/10M:/content", o_token, data, 0, 10 * 1024 * 1024, null, false, false, false, 5 * 1000, "api.onedrive.com");
+                    Util.HttpPut("https://" + ip + "/v1.0/drive/root:/10M:/content", o_token, data, 0, 10 * 1024 * 1024, null, false, false, false, 10 * 1000, "api.onedrive.com");
                     watch.Stop();
                     sw.WriteLine(ip + " " + watch.ElapsedMilliseconds);
                     Console.WriteLine(ip + " " + watch.ElapsedMilliseconds);
@@ -129,7 +129,7 @@ namespace ConnectionTest_o
                     try
                     {
                         watch.Restart();
-                        Util.HttpGet("https://" + ip + file1, o_token, false, false, true, 6 * 1000, "public.bn130" + i + ".livefilestore.com");
+                        Util.HttpGet("https://" + ip + file1, o_token, false, false, true, 8 * 1000, "public.bn130" + i + ".livefilestore.com");
                         watch.Stop();
                         sw.WriteLine(ip + " " + watch.ElapsedMilliseconds);
                         Console.WriteLine(ip + " " + watch.ElapsedMilliseconds);

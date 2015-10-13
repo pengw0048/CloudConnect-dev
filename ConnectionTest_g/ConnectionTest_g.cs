@@ -84,7 +84,7 @@ namespace ConnectionTest_g
             string g_token = g_GetToken(g_refresh_token);
             Console.WriteLine("Ping GoogleDrive");
             ping("www.googleapis.com", sw);
-
+            
             Console.WriteLine("Upload 10M GoogleDrive");
             sw.WriteLine("--UPLOAD10M " + DateTime.Now.ToString() + "---");
             foreach (string ip in ips)
@@ -114,10 +114,13 @@ namespace ConnectionTest_g
                 try
                 {
                     watch.Restart();
-                    Util.HttpPost("https://" + ip + "/upload/drive/v2/files?uploadType=media", g_token, data, 0, 1 * 1024, false, 3 * 1000, "www.googleapis.com");
+                    string respHTML = Util.HttpPost("https://" + ip + "/upload/drive/v2/files?uploadType=media", g_token, data, 0, 1 * 1024, true, 3 * 1000, "www.googleapis.com");
                     watch.Stop();
                     sw.WriteLine(ip + " " + watch.ElapsedMilliseconds);
                     Console.WriteLine(ip + " " + watch.ElapsedMilliseconds);
+                    DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(g_FileResource));
+                    g_FileResource file = (g_FileResource)ser.ReadObject(new MemoryStream(Encoding.ASCII.GetBytes(respHTML)));
+                    Util.HttpDelete("https://www.googleapis.com/drive/v2/files/" + file.id, g_token);
                 }
                 catch (Exception ex)
                 {
