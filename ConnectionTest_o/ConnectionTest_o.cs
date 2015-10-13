@@ -102,6 +102,7 @@ namespace ConnectionTest_o
                     Console.WriteLine(ip + " -1");
                 }
             }
+            o_token = o_GetToken(o_refresh_token);
             Console.WriteLine("Upload 1K OneDrive");
             sw.WriteLine("--UPLOAD1K " + DateTime.Now.ToString() + "---");
             sw.Flush();
@@ -128,6 +129,7 @@ namespace ConnectionTest_o
 
             List<string>[] ipss = new List<string>[5];
             for (int i = 1; i <= 4; i++) ipss[i] = Util.ReadLines("ip--public.bn130" + i + ".livefilestore.com.txt");
+            o_token = o_GetToken(o_refresh_token);
             Console.WriteLine("Download 10M OneDrive");
             sw.WriteLine("--DOWNLOAD10M " + DateTime.Now.ToString() + "---");
             sw.Flush();
@@ -154,6 +156,7 @@ namespace ConnectionTest_o
                     }
                 }
             }
+            o_token = o_GetToken(o_refresh_token);
             Console.WriteLine("Download 1K OneDrive");
             sw.WriteLine("--DOWNLOAD1K " + DateTime.Now.ToString() + "---");
             sw.Flush();

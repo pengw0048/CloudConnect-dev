@@ -113,6 +113,7 @@ namespace ConnectionTest_g
                     Console.WriteLine(ip + " -1");
                 }
             }
+            g_token = g_GetToken(g_refresh_token);
             Console.WriteLine("Upload 1K GoogleDrive");
             sw.WriteLine("--UPLOAD1K " + DateTime.Now.ToString() + "---");
             sw.Flush();
@@ -141,6 +142,7 @@ namespace ConnectionTest_g
             
             string id1 = g_SimpleUpload(g_token, data, 0, 10 * 1024 * 1024);
             string id2 = g_SimpleUpload(g_token, data, 0, 1 * 1024);
+            g_token = g_GetToken(g_refresh_token);
             Console.WriteLine("Download 10M GoogleDrive");
             sw.WriteLine("--DOWNLOAD10M " + DateTime.Now.ToString() + "---");
             sw.Flush();
@@ -163,6 +165,7 @@ namespace ConnectionTest_g
                     Console.WriteLine(ip + " -1");
                 }
             }
+            g_token = g_GetToken(g_refresh_token);
             Console.WriteLine("Download 1K GoogleDrive");
             sw.WriteLine("--DOWNLOAD1K " + DateTime.Now.ToString() + "---");
             sw.Flush();
