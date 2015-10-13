@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConnectionTest_g", "Connect
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConnectionTest_o", "ConnectionTest_o\ConnectionTest_o.csproj", "{D1B9EE49-36A8-4BE9-B3F0-F9C3BADF750F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConTestProcessor", "ConTestProcessor\ConTestProcessor.csproj", "{52F72E48-C594-4498-AB35-870681F2FB06}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{D1B9EE49-36A8-4BE9-B3F0-F9C3BADF750F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D1B9EE49-36A8-4BE9-B3F0-F9C3BADF750F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D1B9EE49-36A8-4BE9-B3F0-F9C3BADF750F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52F72E48-C594-4498-AB35-870681F2FB06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52F72E48-C594-4498-AB35-870681F2FB06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52F72E48-C594-4498-AB35-870681F2FB06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52F72E48-C594-4498-AB35-870681F2FB06}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
