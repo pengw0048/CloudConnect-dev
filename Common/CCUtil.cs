@@ -42,7 +42,7 @@ namespace CCUtil
                 StreamReader reader = new StreamReader(res.GetResponseStream(), Encoding.GetEncoding("utf-8"));
                 string respHTML = reader.ReadToEnd();
                 res.Close();
-                //Console.WriteLine(respHTML);
+                Console.WriteLine(respHTML);
                 return respHTML;
             }
             else

@@ -23,6 +23,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConnectionTest_o", "Connect
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConTestProcessor", "ConTestProcessor\ConTestProcessor.csproj", "{52F72E48-C594-4498-AB35-870681F2FB06}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpeedTest_d", "SpeedTest\SpeedTest_d.csproj", "{CCBCA6B2-8316-4D80-8589-7005F502696E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpeedTest_o", "SpeedTest_o\SpeedTest_o.csproj", "{53F4B6A4-79EB-4351-9FA9-715001770BBD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +73,14 @@ Global
 		{52F72E48-C594-4498-AB35-870681F2FB06}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{52F72E48-C594-4498-AB35-870681F2FB06}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{52F72E48-C594-4498-AB35-870681F2FB06}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCBCA6B2-8316-4D80-8589-7005F502696E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCBCA6B2-8316-4D80-8589-7005F502696E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCBCA6B2-8316-4D80-8589-7005F502696E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCBCA6B2-8316-4D80-8589-7005F502696E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53F4B6A4-79EB-4351-9FA9-715001770BBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53F4B6A4-79EB-4351-9FA9-715001770BBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53F4B6A4-79EB-4351-9FA9-715001770BBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53F4B6A4-79EB-4351-9FA9-715001770BBD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
