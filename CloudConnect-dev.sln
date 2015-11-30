@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpeedTest_o", "SpeedTest_o\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProtocolSender", "ProtocolSender\ProtocolSender.csproj", "{BC14BC9B-C8DD-4741-971F-83D15A45676E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProtocolReceiver", "ProtocolReceiver\ProtocolReceiver.csproj", "{BB53E7EF-9AB4-46B5-8417-8D193DD83439}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,10 @@ Global
 		{BC14BC9B-C8DD-4741-971F-83D15A45676E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BC14BC9B-C8DD-4741-971F-83D15A45676E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BC14BC9B-C8DD-4741-971F-83D15A45676E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB53E7EF-9AB4-46B5-8417-8D193DD83439}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB53E7EF-9AB4-46B5-8417-8D193DD83439}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB53E7EF-9AB4-46B5-8417-8D193DD83439}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB53E7EF-9AB4-46B5-8417-8D193DD83439}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

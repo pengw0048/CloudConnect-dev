@@ -16,7 +16,10 @@ namespace ProtocolReceiver
             TcpListener listener = new TcpListener(IPAddress.Any, 1209);
             listener.Start();
             Console.WriteLine("Started listening.");
+            TcpClient client = listener.AcceptTcpClient();
+            Console.WriteLine("Client Connected. {0} <-- {1}", client.Client.LocalEndPoint, client.Client.RemoteEndPoint);
 
+            Console.ReadLine();
         }
     }
 }
