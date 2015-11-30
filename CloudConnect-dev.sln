@@ -27,7 +27,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpeedTest_d", "SpeedTest\Sp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpeedTest_o", "SpeedTest_o\SpeedTest_o.csproj", "{53F4B6A4-79EB-4351-9FA9-715001770BBD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProtocolServer", "ProtocolServer\ProtocolServer.csproj", "{BC14BC9B-C8DD-4741-971F-83D15A45676E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProtocolSender", "ProtocolSender\ProtocolSender.csproj", "{BC14BC9B-C8DD-4741-971F-83D15A45676E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
