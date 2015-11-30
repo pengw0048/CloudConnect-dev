@@ -65,6 +65,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CCUtil.cs" />
+    <Compile Include="Protocol.cs" />
     <Compile Include="SSLValidator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

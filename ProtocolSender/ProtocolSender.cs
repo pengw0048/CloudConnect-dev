@@ -1,11 +1,10 @@
 ﻿using System;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using CCUtil;
 using Util = CCUtil.CCUtil;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace ProtocolSender
 {
@@ -13,24 +12,38 @@ namespace ProtocolSender
     {
         static void Main(string[] args)
         {
-            if (args.Length != 2)
+            if (args.Length != 3)
             {
-                Console.WriteLine("usage: ProtocolSender.exe IP Port");
+                Console.WriteLine("usage: ProtocolSender.exe IP Port Folder_to_Send");
                 return;
             }
-            TcpClient client = new TcpClient();
+            TcpClient server = new TcpClient();
             try
             {
-                client.Connect(args[0], int.Parse(args[1]));
+                server.Connect(args[0], int.Parse(args[1]));
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 return;
             }
-            Console.WriteLine("Server Connected! {0} --> {1}", client.Client.LocalEndPoint, client.Client.RemoteEndPoint);
+            Console.WriteLine("Server Connected! {0} --> {1}", server.Client.LocalEndPoint, server.Client.RemoteEndPoint);
+            NetworkStream stream = server.GetStream();
+            BinaryFormatter formatter = new BinaryFormatter();
+            DirectoryInfo dir = new DirectoryInfo(args[2]);
+            foreach (FileInfo file in dir.GetFiles())
+            {
+                Console.WriteLine(file.Name);
+                Util.writeStream(stream, "METADATA");
+                FileMetadata meta = new FileMetadata(file);
+                formatter.Serialize(stream, meta);
+                stream.Flush();
 
-            Console.ReadLine();
+            }
+            Util.writeStream(stream, "CLOSE");
+            stream.Close();
+            server.Close();
+            Console.WriteLine("Disconnected.");
         }
     }
 }

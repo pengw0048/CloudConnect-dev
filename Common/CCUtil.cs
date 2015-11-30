@@ -5,11 +5,50 @@ using System;
 using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using System.Diagnostics;
+using System.Security.Cryptography;
 
 namespace CCUtil
 {
     public class CCUtil
     {
+        static string GetMd5Hash(byte[] data)
+        {
+            // Create a new Stringbuilder to collect the bytes
+            // and create a string.
+            StringBuilder sBuilder = new StringBuilder();
+
+            // Loop through each byte of the hashed data 
+            // and format each one as a hexadecimal string.
+            for (int i = 0; i < data.Length; i++)
+            {
+                sBuilder.Append(data[i].ToString("x2"));
+            }
+
+            // Return the hexadecimal string.
+            return sBuilder.ToString();
+        }
+
+        public static string fileMD5(string file)
+        {
+            byte[] md5data;
+            using (var md5 = MD5.Create())
+            using (var fstream = File.OpenRead(file))
+                md5data = md5.ComputeHash(fstream);
+            return GetMd5Hash(md5data);
+        }
+
+        public static void writeStream(Stream stream, string str)
+        {
+            byte[] msg = System.Text.Encoding.Default.GetBytes(str);
+            writeStream(stream, msg);
+        }
+
+        public static void writeStream(Stream stream, byte[] data)
+        {
+            stream.Write(data, 0, data.Length);
+            stream.Flush();
+        }
+
         public static string GetResponse(ref HttpWebRequest req, bool GetLocation = false, bool GetRange = false, bool NeedResponse = true)
         {
             HttpWebResponse res = null;
