@@ -58,6 +58,10 @@ namespace ProtocolSender
                     stream.Flush();
                     Console.WriteLine("File sent.");
                 }
+                else if (str == "DIFF")
+                {
+
+                }
             }
             Util.writeStream(stream, "EXIT");
             stream.Close();

@@ -27,17 +27,7 @@ namespace ProtocolReceiver
                 Console.WriteLine("--" + str);
                 if (str == "EXIT") break;
                 else if (str == "META")
-                {/*
-                    MemoryStream ms = new MemoryStream();
-                    byte[] buffer = new byte[1024];
-                    int metalen = Util.readInt(stream);
-                    while (ms.Length < metalen)
-                    {
-                        int bytesRead = stream.Read(buffer, 0, (int)Math.Min(buffer.Length, metalen - ms.Length));
-                        ms.Write(buffer, 0, bytesRead);
-                    }
-                    ms.Close();
-                    buffer = ms.ToArray();*/
+                {
                     byte[] buffer = Util.readByte(stream);
                     FileMetadata meta = (FileMetadata)formatter.Deserialize(new MemoryStream(buffer, 0, buffer.Length));
                     Console.WriteLine(meta.name);
@@ -46,6 +36,7 @@ namespace ProtocolReceiver
                         FileMetadata meta2 = (FileMetadata)formatter.Deserialize(new FileStream("Cache/" + meta.name + ".meta", FileMode.Open));
                         if (meta.hash != meta2.hash)
                         {
+                            Util.writeStream(stream, "DIFF");
 
                         }
                         else
