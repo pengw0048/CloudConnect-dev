@@ -43,10 +43,55 @@ namespace CCUtil
             writeStream(stream, msg);
         }
 
-        public static void writeStream(Stream stream, byte[] data)
+        public static void writeStream(Stream stream, byte[] data, bool withLength = false)
         {
+            if (withLength) writeStream(stream, data.Length);
             stream.Write(data, 0, data.Length);
             stream.Flush();
+        }
+
+        public static string readString(Stream stream, int maxlen = 4)
+        {
+            byte[] buffer = new byte[maxlen];
+            int bytesRead = stream.Read(buffer, 0, buffer.Length);
+            string str = System.Text.Encoding.Default.GetString(buffer).Trim('\0');
+            return str;
+        }
+
+        public static void writeStream(Stream stream, int val)
+        {
+            byte[] bytes = BitConverter.GetBytes(val);
+            stream.Write(bytes, 0, bytes.Length);
+            stream.Flush();
+        }
+
+        public static int readInt(Stream stream)
+        {
+            byte[] bytes = new byte[4];
+            stream.Read(bytes, 0, 4);
+            return BitConverter.ToInt32(bytes, 0);
+        }
+
+        public static byte[] readByte(Stream stream)
+        {
+            MemoryStream ms = new MemoryStream();
+            byte[] buffer = new byte[4*1024];
+            int metalen = readInt(stream);
+            copyStream(stream, ms, metalen);
+            ms.Close();
+            return ms.ToArray();
+        }
+
+        public static void copyStream(Stream src, Stream dest, int len)
+        {
+            int tot = 0;
+            byte[] buffer = new byte[4 * 1024];
+            while (tot < len)
+            {
+                int bytesRead = src.Read(buffer, 0, Math.Min(buffer.Length, len - tot));
+                dest.Write(buffer, 0, bytesRead);
+                tot += bytesRead;
+            }
         }
 
         public static string GetResponse(ref HttpWebRequest req, bool GetLocation = false, bool GetRange = false, bool NeedResponse = true)

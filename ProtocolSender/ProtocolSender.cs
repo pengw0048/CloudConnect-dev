@@ -5,6 +5,8 @@ using System.Net.Sockets;
 using CCUtil;
 using Util = CCUtil.CCUtil;
 using System.Runtime.Serialization.Formatters.Binary;
+using Blake2Sharp;
+using System.IO.Compression;
 
 namespace ProtocolSender
 {
@@ -34,13 +36,30 @@ namespace ProtocolSender
             foreach (FileInfo file in dir.GetFiles())
             {
                 Console.WriteLine(file.Name);
-                Util.writeStream(stream, "METADATA");
+                Util.writeStream(stream, "META");
                 FileMetadata meta = new FileMetadata(file);
-                formatter.Serialize(stream, meta);
-                stream.Flush();
-
+                MemoryStream ms = new MemoryStream();
+                formatter.Serialize(ms, meta);
+                ms.Close();
+                byte[] bytes = ms.ToArray();
+                Util.writeStream(stream, bytes, true);
+                string str = Util.readString(stream);
+                Console.WriteLine("--" + str);
+                if (str == "PASS")
+                {
+                    Console.WriteLine("File version up to date.");
+                }
+                else if (str == "NEWF")
+                {
+                    Console.WriteLine("Sending new file.");
+                    FileStream fs = new FileStream(file.FullName, FileMode.Open);
+                    fs.CopyTo(stream);
+                    fs.Close();
+                    stream.Flush();
+                    Console.WriteLine("File sent.");
+                }
             }
-            Util.writeStream(stream, "CLOSE");
+            Util.writeStream(stream, "EXIT");
             stream.Close();
             server.Close();
             Console.WriteLine("Disconnected.");

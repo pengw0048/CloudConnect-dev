@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using CCUtil;
 using Util = CCUtil.CCUtil;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.IO.Compression;
 
 namespace ProtocolReceiver
 {
@@ -22,17 +23,46 @@ namespace ProtocolReceiver
             BinaryFormatter formatter = new BinaryFormatter();
             do
             {
-                byte[] buffer = new byte[32];
-                int bytesRead = stream.Read(buffer, 0, buffer.Length);
-                string str = System.Text.Encoding.Default.GetString(buffer).Trim('\0');
+                string str = Util.readString(stream);
                 Console.WriteLine("--" + str);
-                if (str == "CLOSE") break;
-                else if (str == "METADATA")
-                {
-                    buffer = new byte[1024];
-                    bytesRead = stream.Read(buffer, 0, buffer.Length);
-                    FileMetadata meta = (FileMetadata)formatter.Deserialize(new MemoryStream(buffer));
+                if (str == "EXIT") break;
+                else if (str == "META")
+                {/*
+                    MemoryStream ms = new MemoryStream();
+                    byte[] buffer = new byte[1024];
+                    int metalen = Util.readInt(stream);
+                    while (ms.Length < metalen)
+                    {
+                        int bytesRead = stream.Read(buffer, 0, (int)Math.Min(buffer.Length, metalen - ms.Length));
+                        ms.Write(buffer, 0, bytesRead);
+                    }
+                    ms.Close();
+                    buffer = ms.ToArray();*/
+                    byte[] buffer = Util.readByte(stream);
+                    FileMetadata meta = (FileMetadata)formatter.Deserialize(new MemoryStream(buffer, 0, buffer.Length));
+                    Console.WriteLine(meta.name);
+                    if (File.Exists("Cache/" + meta.name + ".meta"))
+                    {
+                        FileMetadata meta2 = (FileMetadata)formatter.Deserialize(new FileStream("Cache/" + meta.name + ".meta", FileMode.Open));
+                        if (meta.hash != meta2.hash)
+                        {
 
+                        }
+                        else
+                        {
+                            Console.WriteLine("Up to date.");
+                            Util.writeStream(stream, "PASS");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("New file.");
+                        Util.writeStream(stream, "NEWF");
+                        formatter.Serialize(new FileStream("Cache/" + meta.name + ".meta", FileMode.Create), meta);
+                        FileStream fs = new FileStream("Cache/" + meta.name, FileMode.Create);
+                        Util.copyStream(stream, fs, (int)meta.size);
+                        Console.WriteLine("Transfer complete.");
+                    }
                 }
             } while (true);
             stream.Close();

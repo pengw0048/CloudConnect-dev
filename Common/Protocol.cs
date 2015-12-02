@@ -22,6 +22,7 @@ namespace CCUtil
         public FileMetadata(FileInfo file)
         {
             name = file.Name;
+            size = file.Length;
             hash = Util.fileMD5(file.FullName);
             modified = file.LastWriteTimeUtc;
         }
