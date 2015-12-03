@@ -1,10 +1,5 @@
-﻿using System.Net;
-using System.IO;
-using System.Text;
+﻿using System.IO;
 using System;
-using System.Collections.Generic;
-using System.Net.NetworkInformation;
-using System.Diagnostics;
 using Util = CCUtil.CCUtil;
 
 namespace CCUtil

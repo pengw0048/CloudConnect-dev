@@ -64,6 +64,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CCStream.cs" />
     <Compile Include="CCUtil.cs" />
     <Compile Include="Protocol.cs" />
     <Compile Include="SSLValidator.cs" />

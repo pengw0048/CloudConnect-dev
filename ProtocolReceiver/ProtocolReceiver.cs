@@ -3,7 +3,6 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using CCUtil;
-using Util = CCUtil.CCUtil;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO.Compression;
 using librsync.net;
@@ -12,83 +11,110 @@ namespace ProtocolReceiver
 {
     class ProtocolReceiver
     {
+        private static BinaryFormatter formatter = new BinaryFormatter();
+
         static void Main(string[] args)
         {
+            // Listen, accept connection, open stream
             TcpListener listener = new TcpListener(IPAddress.Any, 1209);
             listener.Start();
             Console.WriteLine("Started listening on port 1209.");
             TcpClient client = listener.AcceptTcpClient();
             listener.Stop();
             Console.WriteLine("Client Connected! {0} <-- {1}", client.Client.LocalEndPoint, client.Client.RemoteEndPoint);
-            NetworkStream stream = client.GetStream();
-            BinaryFormatter formatter = new BinaryFormatter();
+            NetworkStream clientStream = client.GetStream();
+
+            // Main loop
             do
             {
-                string str = Util.readString(stream);
+                string str = CCStream.readString(clientStream);
                 Console.WriteLine("--" + str);
+
+                // Message switch
                 if (str == "EXIT") break;
                 else if (str == "META")
                 {
-                    byte[] buffer = Util.readByte(stream);
-                    FileMetadata meta = (FileMetadata)formatter.Deserialize(new MemoryStream(buffer, 0, buffer.Length));
-                    Console.WriteLine(meta.name);
-                    if (File.Exists("Cache/" + meta.name + ".meta"))
+                    // Get meta from client
+                    byte[] buffer = CCStream.readByte(clientStream);
+                    FileMetadata newMeta;
+                    using (var memoryStream = new MemoryStream(buffer, 0, buffer.Length))
+                        newMeta = (FileMetadata)formatter.Deserialize(memoryStream);
+                    Console.WriteLine(newMeta.name);
+
+                    if (File.Exists("Cache/" + newMeta.name + ".meta"))
                     {
-                        var metaStream = new FileStream("Cache/" + meta.name + ".meta", FileMode.Open);
-                        FileMetadata meta2 = (FileMetadata)formatter.Deserialize(metaStream);
-                        metaStream.Close();
-                        if (meta.hash != meta2.hash)
+                        // Has older version
+                        FileMetadata oldMeta;
+                        using (var oldMetaStream = new FileStream("Cache/" + newMeta.name + ".meta", FileMode.Open))
+                            oldMeta = (FileMetadata)formatter.Deserialize(oldMetaStream);
+
+                        if (newMeta.hash != oldMeta.hash)
                         {
-                            Util.writeStream(stream, "DIFF");
+                            // This file has been updated
+                            CCStream.writeStream(clientStream, "DIFF");
                             Console.WriteLine("Sending signature.");
-                            var fileStream = new FileStream("Cache/" + meta.name, FileMode.Open);
-                            var signatureStream = Librsync.ComputeSignature(fileStream);
-                            var resultMem = new MemoryStream();
-                            signatureStream.CopyTo(resultMem);
-                            resultMem.Close();
-                            signatureStream.Close();
-                            fileStream.Close();
-                            byte[] signature = resultMem.ToArray();
-                            Util.writeStream(stream, signature, true);
+                            using (var newMetaStream = new FileStream("Cache/" + newMeta.name, FileMode.Open))
+                            using (var signatureStream = Librsync.ComputeSignature(newMetaStream))
+                            using (var memoryStream = new MemoryStream())
+                            {
+                                signatureStream.CopyTo(memoryStream);
+                                memoryStream.Close();
+                                byte[] signature = memoryStream.ToArray();
+                                CCStream.writeStream(clientStream, signature, true);
+                            }
+
+                            // Wait for delta from client
                             Console.WriteLine("Receiving delta.");
-                            var deltaStream = new FileStream("Cache/" + meta.name + ".delta", FileMode.Create);
-                            Util.copyBlockReceive(stream, deltaStream);
+                            using (var deltaStream = new FileStream("Cache/" + newMeta.name + ".delta", FileMode.Create))
+                                CCStream.copyBlockReceive(clientStream, deltaStream);
+
+                            // Apply data and write to a temp file
                             Console.WriteLine("Applying delta.");
-                            deltaStream.Seek(0, SeekOrigin.Begin);
-                            fileStream = new FileStream("Cache/" + meta.name, FileMode.Open);
-                            var newStream = new FileStream("Cache/" + meta.name + ".new", FileMode.Create);
-                            var finalStream = Librsync.ApplyDelta(fileStream, deltaStream);
-                            finalStream.CopyTo(newStream);
-                            finalStream.Close();
-                            newStream.Close();
-                            fileStream.Close();
-                            deltaStream.Close();
-                            File.Delete("Cache/" + meta.name + ".diff");
-                            File.Delete("Cache/" + meta.name);
-                            File.Move("Cache/" + meta.name + ".new", "Cache/" + meta.name);
-                            Console.WriteLine("Delta applied.");
-                            metaStream = new FileStream("Cache/" + meta.name + ".meta", FileMode.Create);
-                            formatter.Serialize(metaStream, meta);
-                            metaStream.Close();
+                            using (var deltaStream = new FileStream("Cache/" + newMeta.name + ".delta", FileMode.Open))
+                            using (var oldStream = new FileStream("Cache/" + newMeta.name, FileMode.Open))
+                            using (var newStream = new FileStream("Cache/" + newMeta.name + ".new", FileMode.Create))
+                            using (var appliedStream = Librsync.ApplyDelta(oldStream, deltaStream))
+                            {
+                                appliedStream.CopyTo(newStream);
+                                Console.WriteLine("Delta applied.");
+                            }
+
+                            // Clean up
+                            File.Delete("Cache/" + newMeta.name + ".delta");
+                            File.Delete("Cache/" + newMeta.name);
+                            File.Move("Cache/" + newMeta.name + ".new", "Cache/" + newMeta.name);
+
+                            // Save new meta
+                            using (var metaStream = new FileStream("Cache/" + newMeta.name + ".meta", FileMode.Create))
+                                formatter.Serialize(metaStream, newMeta);
                         }
                         else
                         {
+                            // File metas match
                             Console.WriteLine("Up to date.");
-                            Util.writeStream(stream, "PASS");
+                            CCStream.writeStream(clientStream, "PASS");
                         }
                     }
                     else
                     {
+                        // Don't have meta = new file
                         Console.WriteLine("New file.");
-                        Util.writeStream(stream, "NEWF");
-                        formatter.Serialize(new FileStream("Cache/" + meta.name + ".meta", FileMode.Create), meta);
-                        FileStream fs = new FileStream("Cache/" + meta.name, FileMode.Create);
-                        Util.copyStream(stream, fs, (int)meta.size);
+                        CCStream.writeStream(clientStream, "NEWF");
+
+                        // Save new meta
+                        using (var newMetaStream = new FileStream("Cache/" + newMeta.name + ".meta", FileMode.Create))
+                            formatter.Serialize(newMetaStream, newMeta);
+
+                        // Receive and save new file
+                        using (var fileStream = new FileStream("Cache/" + newMeta.name, FileMode.Create))
+                            CCStream.copyStream(clientStream, fileStream, (int)newMeta.size);
                         Console.WriteLine("Transfer complete.");
                     }
                 }
             } while (true);
-            stream.Close();
+
+            // Final cleanup
+            clientStream.Close();
             client.Close();
             Console.WriteLine("Disconnected.");
         }
