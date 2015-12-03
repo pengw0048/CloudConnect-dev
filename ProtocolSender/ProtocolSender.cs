@@ -5,8 +5,8 @@ using System.Net.Sockets;
 using CCUtil;
 using Util = CCUtil.CCUtil;
 using System.Runtime.Serialization.Formatters.Binary;
-using Blake2Sharp;
 using System.IO.Compression;
+using librsync.net;
 
 namespace ProtocolSender
 {
@@ -60,7 +60,17 @@ namespace ProtocolSender
                 }
                 else if (str == "DIFF")
                 {
-
+                    Console.WriteLine("Calculating diff.");
+                    byte[] signature = Util.readByte(stream);
+                    var signatureStream = new MemoryStream(signature);
+                    var fileStream = new FileStream(file.FullName, FileMode.Open);
+                    var delta = Librsync.ComputeDelta(signatureStream, fileStream);
+                    Console.WriteLine("Sending diff.");
+                    Util.copyBlockSend(delta, stream);
+                    delta.Close();
+                    fileStream.Close();
+                    signatureStream.Close();
+                    Console.WriteLine("Diff sent.");
                 }
             }
             Util.writeStream(stream, "EXIT");

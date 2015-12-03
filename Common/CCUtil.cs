@@ -43,10 +43,11 @@ namespace CCUtil
             writeStream(stream, msg);
         }
 
-        public static void writeStream(Stream stream, byte[] data, bool withLength = false)
+        public static void writeStream(Stream stream, byte[] data, bool withLength = false, int len = -1)
         {
-            if (withLength) writeStream(stream, data.Length);
-            stream.Write(data, 0, data.Length);
+            if (len == -1) len = data.Length;
+            if (withLength) writeStream(stream, len);
+            stream.Write(data, 0, len);
             stream.Flush();
         }
 
@@ -92,6 +93,36 @@ namespace CCUtil
                 dest.Write(buffer, 0, bytesRead);
                 tot += bytesRead;
             }
+        }
+
+        public static void copyBlockSend(Stream src, Stream dest, int buflen = 4 * 1024)
+        {
+            byte[] buffer = new byte[buflen];
+            while (true)
+            {
+                int bytesRead = src.Read(buffer, 0, buflen);
+                if (bytesRead <= 0) break;
+                writeStream(dest, buffer, true, bytesRead);
+            }
+            writeStream(dest, 0x7fffffff);
+            dest.Flush();
+        }
+
+        public static void copyBlockReceive(Stream src, Stream dest, int buflen = 4 * 1024)
+        {
+            byte[] buffer = new byte[buflen];
+            while (true)
+            {
+                int seglen = readInt(src);
+                if (seglen == 0x7fffffff) break;
+                while (seglen > 0)
+                {
+                    int bytesRead = src.Read(buffer, 0, Math.Min(buflen, seglen));
+                    dest.Write(buffer, 0, bytesRead);
+                    seglen -= bytesRead;
+                }
+            }
+            dest.Flush();
         }
 
         public static string GetResponse(ref HttpWebRequest req, bool GetLocation = false, bool GetRange = false, bool NeedResponse = true)

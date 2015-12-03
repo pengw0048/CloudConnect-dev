@@ -6,6 +6,7 @@ using CCUtil;
 using Util = CCUtil.CCUtil;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO.Compression;
+using librsync.net;
 
 namespace ProtocolReceiver
 {
@@ -33,11 +34,42 @@ namespace ProtocolReceiver
                     Console.WriteLine(meta.name);
                     if (File.Exists("Cache/" + meta.name + ".meta"))
                     {
-                        FileMetadata meta2 = (FileMetadata)formatter.Deserialize(new FileStream("Cache/" + meta.name + ".meta", FileMode.Open));
+                        var metaStream = new FileStream("Cache/" + meta.name + ".meta", FileMode.Open);
+                        FileMetadata meta2 = (FileMetadata)formatter.Deserialize(metaStream);
+                        metaStream.Close();
                         if (meta.hash != meta2.hash)
                         {
                             Util.writeStream(stream, "DIFF");
-
+                            Console.WriteLine("Sending signature.");
+                            var fileStream = new FileStream("Cache/" + meta.name, FileMode.Open);
+                            var signatureStream = Librsync.ComputeSignature(fileStream);
+                            var resultMem = new MemoryStream();
+                            signatureStream.CopyTo(resultMem);
+                            resultMem.Close();
+                            signatureStream.Close();
+                            fileStream.Close();
+                            byte[] signature = resultMem.ToArray();
+                            Util.writeStream(stream, signature, true);
+                            Console.WriteLine("Receiving delta.");
+                            var deltaStream = new FileStream("Cache/" + meta.name + ".delta", FileMode.Create);
+                            Util.copyBlockReceive(stream, deltaStream);
+                            Console.WriteLine("Applying delta.");
+                            deltaStream.Seek(0, SeekOrigin.Begin);
+                            fileStream = new FileStream("Cache/" + meta.name, FileMode.Open);
+                            var newStream = new FileStream("Cache/" + meta.name + ".new", FileMode.Create);
+                            var finalStream = Librsync.ApplyDelta(fileStream, deltaStream);
+                            finalStream.CopyTo(newStream);
+                            finalStream.Close();
+                            newStream.Close();
+                            fileStream.Close();
+                            deltaStream.Close();
+                            File.Delete("Cache/" + meta.name + ".diff");
+                            File.Delete("Cache/" + meta.name);
+                            File.Move("Cache/" + meta.name + ".new", "Cache/" + meta.name);
+                            Console.WriteLine("Delta applied.");
+                            metaStream = new FileStream("Cache/" + meta.name + ".meta", FileMode.Create);
+                            formatter.Serialize(metaStream, meta);
+                            metaStream.Close();
                         }
                         else
                         {
