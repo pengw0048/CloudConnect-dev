@@ -48,7 +48,8 @@ namespace ProtocolReceiver
                         using (var oldMetaStream = new FileStream("Cache/" + newMeta.name + ".meta", FileMode.Open))
                             oldMeta = (FileMetadata)formatter.Deserialize(oldMetaStream);
 
-                        if (newMeta.hash != oldMeta.hash)
+                        //if (newMeta.hash != oldMeta.hash)
+                        if (newMeta.modified != oldMeta.modified)
                         {
                             // This file has been updated
                             CCStream.writeStream(clientStream, "DIFF");

@@ -63,7 +63,7 @@ namespace CCUtil
         public static void copyStream(Stream src, Stream dest, int len)
         {
             int tot = 0;
-            byte[] buffer = new byte[4 * 1024];
+            byte[] buffer = new byte[256 * 1024];
             while (tot < len)
             {
                 int bytesRead = src.Read(buffer, 0, Math.Min(buffer.Length, len - tot));
@@ -73,7 +73,7 @@ namespace CCUtil
         }
 
         // Send all remaining data in src to dest, with maximum block size, in special format
-        public static void copyBlockSend(Stream src, Stream dest, int buflen = 4 * 1024)
+        public static void copyBlockSend(Stream src, Stream dest, int buflen = 256 * 1024)
         {
             byte[] buffer = new byte[buflen];
             while (true)
@@ -87,7 +87,7 @@ namespace CCUtil
         }
 
         // Read data from src to dest in special format
-        public static void copyBlockReceive(Stream src, Stream dest, int buflen = 4 * 1024)
+        public static void copyBlockReceive(Stream src, Stream dest, int buflen = 256 * 1024)
         {
             byte[] buffer = new byte[buflen];
             while (true)

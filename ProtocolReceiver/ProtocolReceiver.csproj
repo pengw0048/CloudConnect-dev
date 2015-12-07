@@ -33,9 +33,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="librsync.net">
-      <HintPath>..\lib\librsync.net.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -53,6 +50,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\librsync.net-master\librsync.net\librsync.net.csproj">
+      <Project>{0b6d94bd-5bfe-49ae-a83d-c504fb504c4c}</Project>
+      <Name>librsync.net</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{531fd818-22e9-4b32-b3fc-b653d5443d08}</Project>
       <Name>Common</Name>
