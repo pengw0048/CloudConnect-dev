@@ -31,7 +31,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProtocolSender", "ProtocolS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProtocolReceiver", "ProtocolReceiver\ProtocolReceiver.csproj", "{BB53E7EF-9AB4-46B5-8417-8D193DD83439}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "librsync.net", "..\..\librsync.net-master\librsync.net\librsync.net.csproj", "{0B6D94BD-5BFE-49AE-A83D-C504FB504C4C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "librsync.net", "librsync.net-master\librsync.net\librsync.net.csproj", "{0B6D94BD-5BFE-49AE-A83D-C504FB504C4C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
