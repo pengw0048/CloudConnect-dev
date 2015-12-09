@@ -47,4 +47,11 @@ Temporary Items
 bin/
 obj/
 res/
+Debug/
+Release/
 *.suo
+*.sdf
+/ProtocolReceiverJ/nbproject/private/
+/ProtocolSenderJ/nbproject/private/
+/ProtocolReceiverJ/build/
+/ProtocolSenderJ/build/
