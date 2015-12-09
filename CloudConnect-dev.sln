@@ -33,10 +33,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProtocolReceiver", "Protoco
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "librsync.net", "librsync.net\librsync.net\librsync.net.csproj", "{0B6D94BD-5BFE-49AE-A83D-C504FB504C4C}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ProtocolReceiverC", "ProtocolReceiverC\ProtocolReceiverC.vcxproj", "{58B689C6-09F8-4DBE-8CA4-45EEFEE4DE8B}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ProtocolSenderC", "ProtocolSenderC\ProtocolSenderC.vcxproj", "{61EBEA9D-3F81-4E59-AD05-D4396345336F}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -227,28 +223,6 @@ Global
 		{0B6D94BD-5BFE-49AE-A83D-C504FB504C4C}.Release|x64.Build.0 = Release|Any CPU
 		{0B6D94BD-5BFE-49AE-A83D-C504FB504C4C}.Release|x86.ActiveCfg = Release|Any CPU
 		{0B6D94BD-5BFE-49AE-A83D-C504FB504C4C}.Release|x86.Build.0 = Release|Any CPU
-		{58B689C6-09F8-4DBE-8CA4-45EEFEE4DE8B}.Debug|Any CPU.ActiveCfg = Debug|Win32
-		{58B689C6-09F8-4DBE-8CA4-45EEFEE4DE8B}.Debug|Any CPU.Build.0 = Debug|Win32
-		{58B689C6-09F8-4DBE-8CA4-45EEFEE4DE8B}.Debug|x64.ActiveCfg = Debug|x64
-		{58B689C6-09F8-4DBE-8CA4-45EEFEE4DE8B}.Debug|x64.Build.0 = Debug|x64
-		{58B689C6-09F8-4DBE-8CA4-45EEFEE4DE8B}.Debug|x86.ActiveCfg = Debug|Win32
-		{58B689C6-09F8-4DBE-8CA4-45EEFEE4DE8B}.Debug|x86.Build.0 = Debug|Win32
-		{58B689C6-09F8-4DBE-8CA4-45EEFEE4DE8B}.Release|Any CPU.ActiveCfg = Release|Win32
-		{58B689C6-09F8-4DBE-8CA4-45EEFEE4DE8B}.Release|x64.ActiveCfg = Release|x64
-		{58B689C6-09F8-4DBE-8CA4-45EEFEE4DE8B}.Release|x64.Build.0 = Release|x64
-		{58B689C6-09F8-4DBE-8CA4-45EEFEE4DE8B}.Release|x86.ActiveCfg = Release|Win32
-		{58B689C6-09F8-4DBE-8CA4-45EEFEE4DE8B}.Release|x86.Build.0 = Release|Win32
-		{61EBEA9D-3F81-4E59-AD05-D4396345336F}.Debug|Any CPU.ActiveCfg = Debug|Win32
-		{61EBEA9D-3F81-4E59-AD05-D4396345336F}.Debug|Any CPU.Build.0 = Debug|Win32
-		{61EBEA9D-3F81-4E59-AD05-D4396345336F}.Debug|x64.ActiveCfg = Debug|x64
-		{61EBEA9D-3F81-4E59-AD05-D4396345336F}.Debug|x64.Build.0 = Debug|x64
-		{61EBEA9D-3F81-4E59-AD05-D4396345336F}.Debug|x86.ActiveCfg = Debug|Win32
-		{61EBEA9D-3F81-4E59-AD05-D4396345336F}.Debug|x86.Build.0 = Debug|Win32
-		{61EBEA9D-3F81-4E59-AD05-D4396345336F}.Release|Any CPU.ActiveCfg = Release|Win32
-		{61EBEA9D-3F81-4E59-AD05-D4396345336F}.Release|x64.ActiveCfg = Release|x64
-		{61EBEA9D-3F81-4E59-AD05-D4396345336F}.Release|x64.Build.0 = Release|x64
-		{61EBEA9D-3F81-4E59-AD05-D4396345336F}.Release|x86.ActiveCfg = Release|Win32
-		{61EBEA9D-3F81-4E59-AD05-D4396345336F}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
