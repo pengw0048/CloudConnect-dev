@@ -1,4 +1,5 @@
 package protocolsenderj;
+import ccutil.*;
 import java.io.*;
 import java.net.*;
 
@@ -47,12 +48,13 @@ public class ProtocolSenderJ {
                     // This is a new file
                     System.out.println("Sending new file.");
                     FileInputStream fis=new FileInputStream(file.getAbsoluteFile());
-                    CCStream.copyBlockReceive(fis, bos);
+                    CCStream.copyStream(fis, bos, (int)file.length());
                     bos.flush();
                     fis.close();
                     System.out.println("File sent.");
                 }
             }
+            CCStream.writeStream(bos, "EXIT");
         }catch(Exception e){
             System.out.println(e);
         }finally{

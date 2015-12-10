@@ -1,4 +1,5 @@
 package protocolreceiverj;
+import ccutil.*;
 import java.io.*;
 import java.net.*;
 
@@ -44,7 +45,7 @@ public class ProtocolReceiverJ {
                     bais=null;
                     System.out.println(newMeta.name);
                     
-                    if(new File("Cache/" + newMeta.name + ".meta").exists()){
+                    if(new File("Z:/Cache/" + newMeta.name + ".meta").exists()){
                         
                     }else{
                         // Don't have meta = new file
@@ -52,14 +53,14 @@ public class ProtocolReceiverJ {
                         CCStream.writeStream(bos, "NEWF");
 
                         // Save new meta
-                        FileOutputStream fos=new FileOutputStream("Cache/" + newMeta.name + ".meta");
+                        FileOutputStream fos=new FileOutputStream("Z:/Cache/" + newMeta.name + ".meta");
                         ObjectOutputStream oos=new ObjectOutputStream(fos);
                         oos.writeObject(newMeta);
                         oos.close();
                         fos.close();
 
                         // Receive and save new file
-                        fos=new FileOutputStream("Cache/" + newMeta.name);
+                        fos=new FileOutputStream("Z:/Cache/" + newMeta.name);
                         CCStream.copyStream(bis, fos, (int)newMeta.size);
                         System.out.println("Transfer complete.");
                     }

@@ -1,4 +1,4 @@
-package protocolsenderj;
+package ccutil;
 import java.io.*;
 
 public class FileMetadata implements Serializable {
