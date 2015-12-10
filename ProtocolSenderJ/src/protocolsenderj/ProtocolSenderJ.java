@@ -17,7 +17,7 @@ public class ProtocolSenderJ {
             System.out.println("Connected: "+socket.toString());
             is=socket.getInputStream();
             os=socket.getOutputStream();
-            os.write(data.getBytes());
+            
         }catch(Exception e){
             System.out.println(e);
         }finally{
