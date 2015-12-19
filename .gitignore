@@ -56,3 +56,7 @@ Release/
 /ProtocolReceiverJ/build/
 /ProtocolSenderJ/build/
 /ProtocolReceiverJ/dist/
+/jarsync/nbproject/private/
+/jarsync/build/
+/jarsync/dist/
+out/

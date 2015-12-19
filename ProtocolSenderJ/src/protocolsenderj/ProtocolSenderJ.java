@@ -2,6 +2,7 @@ package protocolsenderj;
 import ccutil.*;
 import java.io.*;
 import java.net.*;
+import java.util.*;
 
 public class ProtocolSenderJ {
 
@@ -30,13 +31,7 @@ public class ProtocolSenderJ {
                 System.out.println(file.getName());
                 CCStream.writeStream(bos, "META");
                 FileMetadata meta = new FileMetadata(file);
-                ByteArrayOutputStream baos=new ByteArrayOutputStream();
-                ObjectOutputStream oos=new ObjectOutputStream(baos);
-                oos.writeObject(meta);
-                oos.close();
-                byte[] bytes = baos.toByteArray();
-                baos=null;
-                CCStream.writeStream(bos, bytes, true);
+                CCStream.writeObject(bos, meta);
                 
                 // Switch server response
                 String str = CCStream.readString(bis);
@@ -52,6 +47,17 @@ public class ProtocolSenderJ {
                     bos.flush();
                     fis.close();
                     System.out.println("File sent.");
+                }else if (str.equals("DIFF")){
+                    System.out.println("Receiving signature.");
+                    Vector signature=(Vector)CCStream.readObject(bis);
+                    
+                    System.out.println("Sending delta.");
+                    FileInputStream fis=new FileInputStream(file.getAbsoluteFile());
+                    BufferedInputStream bis2=new BufferedInputStream(fis);
+                    SSync.sendDelta(bos, bis2, signature);
+                    bis2.close();
+                    fis.close();
+                    System.out.println("Delta sent.");
                 }
             }
             CCStream.writeStream(bos, "EXIT");
@@ -67,7 +73,7 @@ public class ProtocolSenderJ {
             }catch(Exception e){
             }
         }
-        System.out.println("Done.");
+        System.out.println("Disconnected.");
     }
     
 }

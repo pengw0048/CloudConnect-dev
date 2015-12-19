@@ -2,6 +2,7 @@ package protocolreceiverj;
 import ccutil.*;
 import java.io.*;
 import java.net.*;
+import java.util.*;
 
 public class ProtocolReceiverJ {
 
@@ -46,7 +47,51 @@ public class ProtocolReceiverJ {
                     System.out.println(newMeta.name);
                     
                     if(new File("Z:/Cache/" + newMeta.name + ".meta").exists()){
+                        // Has older version
+                        FileInputStream fis=new FileInputStream("Z:/Cache/" + newMeta.name + ".meta");
+                        ois=new ObjectInputStream(fis);
+                        FileMetadata oldMeta=(FileMetadata)ois.readObject();
+                        ois.close();
+                        fis.close();
                         
+                        //if (newMeta.hash != oldMeta.hash)
+                        if (newMeta.modified != oldMeta.modified){
+                            // This file has been updated
+                            CCStream.writeStream(bos,"DIFF");
+                            System.out.println("Sending signature.");
+                            FileInputStream fis2=new FileInputStream("Z:/Cache/" + newMeta.name);
+                            BufferedInputStream bis2=new BufferedInputStream(fis2);
+                            Vector signature=SSync.getSignature(bos,bis2,64*1024);
+                            bis2.close();
+                            fis2.close();
+                            CCStream.writeObject(bos,signature);
+                            
+                            // Wait for delta from client
+                            System.out.println("Receiving delta.");
+                            RandomAccessFile raf=new RandomAccessFile("Z:/Cache/" + newMeta.name,"rw");
+                            FileOutputStream fos2=new FileOutputStream("Z:/Cache/" + newMeta.name + ".new");
+                            BufferedOutputStream bos2=new BufferedOutputStream(fos2);
+                            SSync.applyDelta(raf,bis,bos2);
+                            bos2.close();
+                            fos2.close();
+                            raf.close();
+                            System.out.println("Delta applied.");
+                            
+                            // Clean up
+                            new File("Z:/Cache/" + newMeta.name).delete();
+                            new File("Z:/Cache/" + newMeta.name + ".new").renameTo(new File("Z:/Cache/" + newMeta.name));
+                            
+                            // Save new meta
+                            FileOutputStream fos=new FileOutputStream("Z:/Cache/" + newMeta.name + ".meta");
+                            ObjectOutputStream oos=new ObjectOutputStream(fos);
+                            oos.writeObject(newMeta);
+                            oos.close();
+                            fos.close();
+                        }else{
+                            // File metas match
+                            System.out.println("Up to date.");
+                            CCStream.writeStream(bos, "PASS");
+                        }
                     }else{
                         // Don't have meta = new file
                         System.out.println("New file.");

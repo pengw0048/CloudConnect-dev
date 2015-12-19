@@ -2,7 +2,7 @@ package ccutil;
 import java.io.*;
 
 public class CCStream {
-    
+
     /**
      * 整型转换为4位字节数组
      * @param intValue
@@ -28,13 +28,17 @@ public class CCStream {
         }
         return intValue;
     }
-    
+
     // Write an integer to stream
     public static void writeStream(OutputStream stream, int val) throws Exception
     {
+        writeStream(stream,val,true);
+    }
+    public static void writeStream(OutputStream stream, int val, boolean flush) throws Exception
+    {
         byte[] bytes = int2Byte(val);
         stream.write(bytes, 0, bytes.length);
-        stream.flush();
+        if(flush)stream.flush();
     }
 
     // Read an intger from stream
@@ -44,7 +48,7 @@ public class CCStream {
         stream.read(bytes, 0, 4);
         return byte2Int(bytes);
     }
-    
+
     // Write byte array to stream, can decide whether attach its length ahead
     public static void writeStream(OutputStream stream, byte[] data, boolean withLength, int len, boolean flush) throws Exception
     {
@@ -65,7 +69,7 @@ public class CCStream {
     {
         writeStream(stream,data,false);
     }
-    
+
     // Read a byte array from stream with its length ahead
     public static byte[] readByte(InputStream stream) throws Exception
     {
@@ -79,14 +83,14 @@ public class CCStream {
         }
         return buffer;
     }
-    
+
     // Write a string to stream with its length ahead
     public static void writeStream(OutputStream stream, String str) throws Exception
     {
         byte[] msg = str.getBytes();
         writeStream(stream, msg, true);
     }
-    
+
     // Read string with its length ahead
     public static String readString(InputStream stream) throws Exception
     {
@@ -96,7 +100,7 @@ public class CCStream {
         String str = new String(buffer).trim();
         return str;
     }
-    
+
     // Send all remaining data in src to dest, with maximum block size, in special format
     public static void copyBlockSend(InputStream src, OutputStream dest, int buflen) throws Exception
     {
@@ -135,7 +139,7 @@ public class CCStream {
     {
         copyBlockReceive(src,dest,256*1024);
     }
-    
+
     // Copy specified length of data from src to dest
     public static void copyStream(InputStream src, OutputStream dest, int len) throws Exception
     {
@@ -147,5 +151,27 @@ public class CCStream {
             dest.write(buffer, 0, bytesRead);
             tot += bytesRead;
         }
+    }
+
+    public static byte[] serializeObject(Object obj) throws Exception{
+        ByteArrayOutputStream baos=new ByteArrayOutputStream();
+        ObjectOutputStream oos=new ObjectOutputStream(baos);
+        oos.writeObject(obj);
+        oos.close();
+        return baos.toByteArray();
+    }
+
+    public static Object readObject(InputStream stream) throws Exception{
+        byte[] buf=readByte(stream);
+        ByteArrayInputStream bais=new ByteArrayInputStream(buf);
+        ObjectInputStream ois=new ObjectInputStream(bais);
+        Object ret=ois.readObject();
+        ois.close();
+        return ret;
+    }
+
+    public static void writeObject(OutputStream stream, Object obj) throws Exception
+    {
+        writeStream(stream, serializeObject(obj), true);
     }
 }

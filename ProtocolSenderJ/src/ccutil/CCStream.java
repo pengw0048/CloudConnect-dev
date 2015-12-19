@@ -32,9 +32,13 @@ public class CCStream {
     // Write an integer to stream
     public static void writeStream(OutputStream stream, int val) throws Exception
     {
+        writeStream(stream,val,true);
+    }
+    public static void writeStream(OutputStream stream, int val, boolean flush) throws Exception
+    {
         byte[] bytes = int2Byte(val);
         stream.write(bytes, 0, bytes.length);
-        stream.flush();
+        if(flush)stream.flush();
     }
 
     // Read an intger from stream
@@ -147,5 +151,27 @@ public class CCStream {
             dest.write(buffer, 0, bytesRead);
             tot += bytesRead;
         }
+    }
+    
+    public static byte[] serializeObject(Object obj) throws Exception{
+        ByteArrayOutputStream baos=new ByteArrayOutputStream();
+        ObjectOutputStream oos=new ObjectOutputStream(baos);
+        oos.writeObject(obj);
+        oos.close();
+        return baos.toByteArray();
+    }
+    
+    public static Object readObject(InputStream stream) throws Exception{
+        byte[] buf=readByte(stream);
+        ByteArrayInputStream bais=new ByteArrayInputStream(buf);
+        ObjectInputStream ois=new ObjectInputStream(bais);
+        Object ret=ois.readObject();
+        ois.close();
+        return ret;
+    }
+    
+    public static void writeObject(OutputStream stream, Object obj) throws Exception
+    {
+        writeStream(stream, serializeObject(obj), true);
     }
 }
