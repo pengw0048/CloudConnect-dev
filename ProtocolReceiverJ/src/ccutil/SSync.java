@@ -20,9 +20,11 @@ public class SSync {
     public static void sendDelta(OutputStream os, InputStream is, Vector vec) throws Exception{
         int block_size=(int)vec.get(0);
         CCStream.writeStream(os,block_size);
-        HashMap<Integer,Integer> dict=new HashMap<>();
+        HashMap<Integer,Vector> dict=new HashMap<>();
         for(int i=1;i<vec.size();i+=2){
-            dict.put((Integer)vec.get(i),(Integer)(i/2));
+            if(!dict.containsKey((int)vec.get(i)))
+                dict.put((int)vec.get(i), new Vector());
+            dict.get((int)vec.get(i)).add(i/2);
         }
         Checksum32 cs=new Checksum32();
         byte[] buf=new byte[block_size];
@@ -45,16 +47,20 @@ public class SSync {
             }
             boolean blockMatch = false;
             if (dict.containsKey(cs.getValue())) {
-                int pos = dict.get(cs.getValue());
-                if (vec.get(pos + 1).equals(Crypto.MD5(cs.getBlock()))) {
-                    blockMatch = true;
-                    if (dbpos > 0) {
-                        CCStream.writeStream(os, dbpos, false);
-                        os.write(deltaBlock);
-                        dbpos = 0;
+                Vector tvec = dict.get(cs.getValue());
+                for(int i=0;i<tvec.size();i++){
+                    int pos = (int)tvec.get(i);
+                    if (vec.get(pos * 2 + 2).equals(Crypto.MD5(cs.getBlock()))) {
+                        blockMatch = true;
+                        if (dbpos > 0) {
+                            CCStream.writeStream(os, dbpos, false);
+                            os.write(deltaBlock);
+                            dbpos = 0;
+                        }
+                        CCStream.writeStream(os, -pos, false);
+                        nextBlock = true;
+                        break;
                     }
-                    CCStream.writeStream(os, -pos, false);
-                    nextBlock = true;
                 }
             }
             if (!blockMatch){
