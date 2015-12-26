@@ -60,3 +60,4 @@ Release/
 /jarsync/build/
 /jarsync/dist/
 out/
+/ProtocolSenderJ/dist/

@@ -17,7 +17,7 @@ public class ProtocolSenderJ {
         Socket socket=null;
         try{
             // Establish connection to server and get stream
-            socket=new Socket("127.0.0.1",1209);
+            socket=new Socket(args[0],1209);
             System.out.println("Connected: "+socket.toString());
             is=socket.getInputStream();
             os=socket.getOutputStream();
@@ -25,7 +25,7 @@ public class ProtocolSenderJ {
             bos=new BufferedOutputStream(os);
             
             // Enumerate files
-            File[] files=new File("Z:\\1").listFiles();
+            File[] files=new File(args[1]).listFiles();
             for(File file:files){
                 // Send meta
                 System.out.println(file.getName());

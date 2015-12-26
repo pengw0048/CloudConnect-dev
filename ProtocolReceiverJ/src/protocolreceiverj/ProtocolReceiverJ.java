@@ -46,9 +46,9 @@ public class ProtocolReceiverJ {
                     bais=null;
                     System.out.println(newMeta.name);
                     
-                    if(new File("Z:/Cache/" + newMeta.name + ".meta").exists()){
+                    if(new File(args[0] + newMeta.name + ".meta").exists()){
                         // Has older version
-                        FileInputStream fis=new FileInputStream("Z:/Cache/" + newMeta.name + ".meta");
+                        FileInputStream fis=new FileInputStream(args[0] + newMeta.name + ".meta");
                         ois=new ObjectInputStream(fis);
                         FileMetadata oldMeta=(FileMetadata)ois.readObject();
                         ois.close();
@@ -59,7 +59,7 @@ public class ProtocolReceiverJ {
                             // This file has been updated
                             CCStream.writeStream(bos,"DIFF");
                             System.out.println("Sending signature.");
-                            FileInputStream fis2=new FileInputStream("Z:/Cache/" + newMeta.name);
+                            FileInputStream fis2=new FileInputStream(args[0] + newMeta.name);
                             BufferedInputStream bis2=new BufferedInputStream(fis2);
                             Vector signature=SSync.getSignature(bos,bis2,64*1024);
                             bis2.close();
@@ -68,8 +68,8 @@ public class ProtocolReceiverJ {
                             
                             // Wait for delta from client
                             System.out.println("Receiving delta.");
-                            RandomAccessFile raf=new RandomAccessFile("Z:/Cache/" + newMeta.name,"rw");
-                            FileOutputStream fos2=new FileOutputStream("Z:/Cache/" + newMeta.name + ".new");
+                            RandomAccessFile raf=new RandomAccessFile(args[0] + newMeta.name,"rw");
+                            FileOutputStream fos2=new FileOutputStream(args[0] + newMeta.name + ".new");
                             BufferedOutputStream bos2=new BufferedOutputStream(fos2);
                             SSync.applyDelta(raf,bis,bos2);
                             bos2.close();
@@ -78,11 +78,11 @@ public class ProtocolReceiverJ {
                             System.out.println("Delta applied.");
                             
                             // Clean up
-                            new File("Z:/Cache/" + newMeta.name).delete();
-                            new File("Z:/Cache/" + newMeta.name + ".new").renameTo(new File("Z:/Cache/" + newMeta.name));
+                            new File(args[0] + newMeta.name).delete();
+                            new File(args[0] + newMeta.name + ".new").renameTo(new File(args[0] + newMeta.name));
                             
                             // Save new meta
-                            FileOutputStream fos=new FileOutputStream("Z:/Cache/" + newMeta.name + ".meta");
+                            FileOutputStream fos=new FileOutputStream(args[0] + newMeta.name + ".meta");
                             ObjectOutputStream oos=new ObjectOutputStream(fos);
                             oos.writeObject(newMeta);
                             oos.close();
@@ -98,14 +98,14 @@ public class ProtocolReceiverJ {
                         CCStream.writeStream(bos, "NEWF");
 
                         // Save new meta
-                        FileOutputStream fos=new FileOutputStream("Z:/Cache/" + newMeta.name + ".meta");
+                        FileOutputStream fos=new FileOutputStream(args[0] + newMeta.name + ".meta");
                         ObjectOutputStream oos=new ObjectOutputStream(fos);
                         oos.writeObject(newMeta);
                         oos.close();
                         fos.close();
 
                         // Receive and save new file
-                        fos=new FileOutputStream("Z:/Cache/" + newMeta.name);
+                        fos=new FileOutputStream(args[0] + newMeta.name);
                         CCStream.copyStream(bis, fos, (int)newMeta.size);
                         System.out.println("Transfer complete.");
                     }
