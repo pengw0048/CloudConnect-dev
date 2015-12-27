@@ -1,0 +1,28 @@
+onedrive:
+先GET这个地址：
+  https://login.live.com/oauth20_authorize.srf?client_id=000000004816FA26&scope=wl.signin%20wl.offline_access%20onedrive.readwrite&response_type=code&redirect_uri=http://stomakun.tk/echo.php
+授权后跳转到http://stomakun.tk/echo.php?......这个地址，返回以下内容：
+  array(1) { ["code"]=> string(37) "Mbd501cd7-03ad-a570-2a7a-214dbe551bb9" } 
+然后GET：（用上面得到的替换{code}）
+  https://login.live.com/oauth20_token.srf?client_id=000000004816FA26&redirect_uri=http://stomakun.tk/echo.php&client_secret=UBVcd-hCr6JYFnldXyY5pn85T2rkUGMW&code={code}&grant_type=authorization_code
+得到一个json：
+  {
+  "token_type":"bearer",
+  "expires_in": 3600,
+  "scope":"wl.basic onedrive.readwrite",
+  "access_token":"EwCo...AA==",
+  "refresh_token":"eyJh...9323"
+  }
+只需要保留refresh_token。
+
+
+
+dropbox:
+GET：
+  https://www.dropbox.com/1/oauth2/authorize?response_type=code&client_id=e02wt12ew36xlcm
+授权后自动跳转到https://www.dropbox.com/1/oauth2/authorize_submit，会在网页上显示一个code。然后POST：
+  https://api.dropboxapi.com/1/oauth2/token，参数：
+  code={code}&grant_type=authorization_code&client_id=e02wt12ew36xlcm&client_secret=s0712avjofgg45g
+得到一个json：
+  {"access_token": "K4g_u85PlIIAAAAAAAAAP4ujK8flVY9ZygeNXayyLb3wwTSdko06o1D_fpUZfl1Q", "token_type": "bearer", "uid": "348962765"}
+保留access_token即可
