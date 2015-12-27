@@ -274,24 +274,17 @@ namespace Exp1_3
             Console.ReadLine();
 
             Console.WriteLine("Download 10*1MB OneDrive");
-            tot = 0;
             for (int i = 0; i < 10; i++)
                 try
                 {
-                    watch.Restart();
                     Util.HttpGet("https://api.onedrive.com/v1.0/drive/root:/1MB:/content", o_token, Timeout: 8 * 1000);
-                    watch.Stop();
-                    tot += watch.ElapsedMilliseconds;
-                    Console.WriteLine(watch.ElapsedMilliseconds);
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex);
-                    Console.WriteLine("-1");
                     i--;
                 }
-            Console.WriteLine("Total: " + tot);
-            sw.WriteLine(tot);
+            Console.ReadLine();
 
             Console.WriteLine("Completed.");
         }
