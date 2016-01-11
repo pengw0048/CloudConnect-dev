@@ -50,7 +50,9 @@ namespace Exp1_3
 
         static void Main(string[] args)
         {
+            Random r = new Random();
             byte[] data = new byte[10 * 1024 * 1024];
+            r.NextBytes(data);/*
             Console.WriteLine("Upload 10KB Dropbox");
             try
             {
@@ -82,6 +84,7 @@ namespace Exp1_3
             {
                 Console.WriteLine(ex);
             }
+            Console.ReadLine();
 
             Console.WriteLine("Download 1MB Dropbox");
             try
@@ -97,17 +100,18 @@ namespace Exp1_3
             Console.WriteLine("Upload 10MB Dropbox");
             try
             {
-                Util.HttpPut("https://content.dropboxapi.com/1/files_put/auto/10MB", d_token, data, 0, 10 * 1024 * 1024, null, true, false, false, 8 * 1000);
+                Util.HttpPut("https://content.dropboxapi.com/1/files_put/auto/10MB", d_token, data, 0, 10 * 1024 * 1024, null, true, false, false, 80 * 1000);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
             }
-
+            Console.ReadLine();
+            
             Console.WriteLine("Download 10MB Dropbox");
             try
             {
-                Util.HttpGet("https://content.dropboxapi.com/1/files/auto/10MB", d_token, false, true, true, 8 * 1000);
+                Util.HttpGet("https://content.dropboxapi.com/1/files/auto/10MB", d_token, false, true, true, 80 * 1000);
             }
             catch (Exception ex)
             {
@@ -165,9 +169,10 @@ namespace Exp1_3
                     Console.WriteLine(ex);
                     i--;
                 }
-            Console.ReadLine();
+            Console.ReadLine();*/
 
             string o_token = o_GetToken(o_refresh_token);
+            Console.ReadLine();/*
             Console.WriteLine("Upload 10KB Onedrive");
             try
             {
@@ -193,7 +198,7 @@ namespace Exp1_3
             Console.WriteLine("Upload 1MB Onedrive");
             try
             {
-                Util.HttpPut("https://api.onedrive.com/v1.0/drive/root:/1MB:/content", o_token, data, 0, 1024 * 1024, null, false, false, false, 8 * 1000);
+                Util.HttpPut("https://api.onedrive.com/v1.0/drive/root:/1MB:/content", o_token, data, 0, 1024 * 1024, null, false, false, false, 15 * 1000);
             }
             catch (Exception ex)
             {
@@ -204,7 +209,7 @@ namespace Exp1_3
             Console.WriteLine("Download 1MB OneDrive");
             try
             {
-                Util.HttpGet("https://api.onedrive.com/v1.0/drive/root:/1MB:/content", o_token, Timeout: 8 * 1000);
+                Util.HttpGet("https://api.onedrive.com/v1.0/drive/root:/1MB:/content", o_token, Timeout: 15 * 1000);
             }
             catch (Exception ex)
             {
@@ -215,7 +220,7 @@ namespace Exp1_3
             Console.WriteLine("Upload 10MB Onedrive");
             try
             {
-                Util.HttpPut("https://api.onedrive.com/v1.0/drive/root:/10MB:/content", o_token, data, 0, 10 * 1024 * 1024, null, false, false, false, 8 * 1000);
+                Util.HttpPut("https://api.onedrive.com/v1.0/drive/root:/10MB:/content", o_token, data, 0, 10 * 1024 * 1024, null, false, false, false, 80 * 1000);
             }
             catch (Exception ex)
             {
@@ -226,7 +231,7 @@ namespace Exp1_3
             Console.WriteLine("Download 10MB OneDrive");
             try
             {
-                Util.HttpGet("https://api.onedrive.com/v1.0/drive/root:/10MB:/content", o_token, Timeout: 8 * 1000);
+                Util.HttpGet("https://api.onedrive.com/v1.0/drive/root:/10MB:/content", o_token, Timeout: 80 * 1000);
             }
             catch (Exception ex)
             {
@@ -247,10 +252,11 @@ namespace Exp1_3
                 }
             Console.ReadLine();
 
-            Console.WriteLine("Download 10KB OneDrive");
+            Console.WriteLine("Download 100*10KB OneDrive");
             for (int i = 0; i < 100; i++)
                 try
                 {
+                    Console.WriteLine(i);
                     Util.HttpGet("https://api.onedrive.com/v1.0/drive/root:/10KB:/content", o_token, Timeout: 6 * 1000);
                 }
                 catch (Exception ex)
@@ -258,13 +264,14 @@ namespace Exp1_3
                     Console.WriteLine(ex);
                     i--;
                 }
-            Console.ReadLine();
+            Console.ReadLine();*/
 
             Console.WriteLine("Upload 10*1MB Onedrive");
             for (int i = 0; i < 10; i++)
                 try
                 {
-                    Util.HttpPut("https://api.onedrive.com/v1.0/drive/root:/1MB:/content", o_token, data, 0, 1024 * 1024, null, false, false, false, 8 * 1000);
+                    Console.WriteLine(i);
+                    Util.HttpPut("https://api.onedrive.com/v1.0/drive/root:/1MB:/content", o_token, data, 0, 1024 * 1024, null, false, false, false, 15 * 1000);
                 }
                 catch (Exception ex)
                 {
@@ -277,7 +284,8 @@ namespace Exp1_3
             for (int i = 0; i < 10; i++)
                 try
                 {
-                    Util.HttpGet("https://api.onedrive.com/v1.0/drive/root:/1MB:/content", o_token, Timeout: 8 * 1000);
+                    Console.WriteLine(i);
+                    Util.HttpGet("https://api.onedrive.com/v1.0/drive/root:/1MB:/content", o_token, Timeout: 15 * 1000);
                 }
                 catch (Exception ex)
                 {

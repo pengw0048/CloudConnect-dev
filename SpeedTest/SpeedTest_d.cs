@@ -34,7 +34,7 @@ namespace SpeedTest_d
             Console.WriteLine("Uploading...");
             byte[] file = File.ReadAllBytes("simple.txt");
             watch.Start();
-            string respHTML = Util.HttpPut("https://content.dropboxapi.com/1/files_put/auto/simple.txt?", token, file);
+            string respHTML = Util.HttpPut("https://content.dropboxapi.com/1/files_put/auto/simple.txt?", token, file, Timeout: 50000);
             watch.Stop();
             //File.Delete("simple.txt");
             //Console.WriteLine("Finished.");
@@ -55,6 +55,8 @@ namespace SpeedTest_d
             Console.WriteLine("Downloading...");
             watch.Start();
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
+            req.Timeout = 50000;
+            req.ReadWriteTimeout = 50000;
             WebResponse res = req.GetResponse();
             StreamReader s = new StreamReader(res.GetResponseStream());
             Console.WriteLine(s.ReadToEnd().Length);
@@ -71,12 +73,12 @@ namespace SpeedTest_d
         static void Main(string[] args)
         {
             List<int> time = new List<int>();
-            for (int i = 1; i <= 50; i++)
+            for (int i = 1; i <= 51; i+=10)
             {
                 Console.WriteLine(i);
-                SimpleUpload(i * 1024 * 1024);
-                //time.Add(SimpleUpload(i * 1024 * 1024));
-                time.Add(Download(GetDownloadLink()));
+                time.Add(SimpleUpload(i * 1024 * 1024));
+                //SimpleUpload(i * 1024 * 1024);
+                //time.Add(Download(GetDownloadLink()));
                 Delete("simple.txt");
                 GC.Collect();
                 GC.WaitForPendingFinalizers();

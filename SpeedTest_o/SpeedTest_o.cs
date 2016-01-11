@@ -49,7 +49,7 @@ namespace SpeedTest_d
             Console.WriteLine("Uploading...");
             byte[] file = File.ReadAllBytes("simple.txt");
             watch.Start();
-            string respHTML = Util.HttpPut("https://api.onedrive.com/v1.0/drive/root:/simple.txt:/content", token, File.ReadAllBytes("simple.txt"));
+            string respHTML = Util.HttpPut("https://api.onedrive.com/v1.0/drive/root:/simple.txt:/content", token, File.ReadAllBytes("simple.txt"), Timeout: 30000);
             watch.Stop();
             //File.Delete("simple.txt");
             Console.WriteLine("Finished.");
@@ -67,6 +67,8 @@ namespace SpeedTest_d
             Console.WriteLine("Downloading...");
             watch.Start();
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
+            req.Timeout = 50000;
+            req.ReadWriteTimeout = 50000;
             WebResponse res = req.GetResponse();
             StreamReader s = new StreamReader(res.GetResponseStream());
             Console.WriteLine(s.ReadToEnd().Length);
@@ -84,12 +86,12 @@ namespace SpeedTest_d
         {
             string token = GetToken(refresh_token);
             List<int> time = new List<int>();
-            for (int i = 1; i <= 30; i++)
+            for (int i = 1; i <= 51; i+=10)
             {
                 Console.WriteLine(i);
-                SimpleUpload(token, i * 1024 * 1024);
-                //time.Add(SimpleUpload(token, i * 1024 * 1024));
-                time.Add(Download(GetDownloadLink(token)));
+                time.Add(SimpleUpload(token, i * 1024 * 1024));
+                //SimpleUpload(token, i * 1024 * 1024);
+                //time.Add(Download(GetDownloadLink(token)));
                 Delete("simple.txt", token);
                 GC.Collect();
                 GC.WaitForPendingFinalizers();

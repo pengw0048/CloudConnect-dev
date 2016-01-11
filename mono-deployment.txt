@@ -6,3 +6,17 @@ sudo apt-get update
 sudo apt-get install mono-devel mono-complete referenceassemblies-pcl ca-certificates-mono mono-vbnc
 
 mono YourApplication.exe
+
+On Amazon AMI:
+sudo rpm --import "http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF"
+sudo yum-config-manager --add-repo http://download.mono-project.com/repo/centos/
+wget http://download.mono-project.com/sources/mono/mono-4.2.2.10.tar.bz2
+bzip2 -d mono-4.2.2.10.tar.bz2
+tar xvf mono-4.2.2.10.tar >/dev/null
+修改 /etc/yum.repos.d/epel.repo。在标记了 [epel] 的部分下，将 enabled=0 改为 enabled=1。
+sudo yum install git autoconf libtool automake build-essential gettext gcc gcc-c++
+cd mono-4.2.2
+./configure --prefix=/usr/local
+make
+sudo make install
+mozroots --import --sync

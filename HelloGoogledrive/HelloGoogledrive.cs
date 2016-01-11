@@ -128,7 +128,7 @@ namespace HelloGoogledrive
             GetBasicInfo(token);
             string id1 = SimpleUpload(token, 1024);
             string id2 = ChunkedUpload(token, 1024 * 1024, 3);
-            GetDownloadLink(token, id1);
+            Console.WriteLine( GetDownloadLink(token, id1));
             Delete(token, id1);
             Delete(token, id2);
         }
